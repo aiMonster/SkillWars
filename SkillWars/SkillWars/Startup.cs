@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using DataAccessLayer.Context;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -17,21 +19,25 @@ namespace SkillWars
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        public Startup(IHostingEnvironment env)
         {
-            Configuration = configuration;
+            var builder = new ConfigurationBuilder()
+                .SetBasePath(env.ContentRootPath)
+                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);               
+                //.AddJsonFile($"EmailNotificationsLocalization.json", optional: true)
+                //.AddEnvironmentVariables();
+            Configuration = builder.Build();
         }
 
-        public IConfiguration Configuration { get; }
+        public IConfigurationRoot Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddSwaggerGen(c =>
-            {
-                
-                c.SwaggerDoc("v1", new Info { Title = "SkillWars API", Version = "v1" });
-                c.AddSecurityDefinition("Bearer", new ApiKeyScheme()
+            services.AddSwaggerGen(options =>
+            {                
+                options.SwaggerDoc("v1", new Info { Title = "SkillWars API", Version = "v1" });
+                options.AddSecurityDefinition("Bearer", new ApiKeyScheme()
                 {
                     Name = "Authorization",
                     In = "header",
@@ -42,10 +48,13 @@ namespace SkillWars
                 var xmlPath = Path.Combine(basePath, "SkillWarsDoc.xml");
 
                 if (File.Exists(xmlPath))
-                    c.IncludeXmlComments(xmlPath);
+                    options.IncludeXmlComments(xmlPath);
             });
 
-            services.AddMvc(options =>
+            services.AddDbContext<SkillWarsContext>(options =>
+                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+            
+                services.AddMvc(options =>
             {
                 options.Filters.Add(new RequireHttpsAttribute());
             });

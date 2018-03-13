@@ -3,7 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27428.2002
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SkillWars", "SkillWars\SkillWars.csproj", "{D05C9855-FCB0-4F17-8A14-F927D34F9DC5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SkillWars", "SkillWars\SkillWars.csproj", "{D05C9855-FCB0-4F17-8A14-F927D34F9DC5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "Common\Common.csproj", "{58BD8BFB-784D-4392-A525-10AC44F14BEF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataAccessLayer", "DataAccessLayer\DataAccessLayer.csproj", "{2D4C4511-2C60-454F-872F-AD31E9124F5F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Services", "Services\Services.csproj", "{4A751F3B-23C5-4D63-BCD3-C93293CAF00E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebSocketLayer", "WebSocketLayer\WebSocketLayer.csproj", "{55AF4BC1-099A-4190-8C57-DD8305CF9ADB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +23,22 @@ Global
 		{D05C9855-FCB0-4F17-8A14-F927D34F9DC5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D05C9855-FCB0-4F17-8A14-F927D34F9DC5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D05C9855-FCB0-4F17-8A14-F927D34F9DC5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{58BD8BFB-784D-4392-A525-10AC44F14BEF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{58BD8BFB-784D-4392-A525-10AC44F14BEF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{58BD8BFB-784D-4392-A525-10AC44F14BEF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{58BD8BFB-784D-4392-A525-10AC44F14BEF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2D4C4511-2C60-454F-872F-AD31E9124F5F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2D4C4511-2C60-454F-872F-AD31E9124F5F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2D4C4511-2C60-454F-872F-AD31E9124F5F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2D4C4511-2C60-454F-872F-AD31E9124F5F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4A751F3B-23C5-4D63-BCD3-C93293CAF00E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4A751F3B-23C5-4D63-BCD3-C93293CAF00E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4A751F3B-23C5-4D63-BCD3-C93293CAF00E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4A751F3B-23C5-4D63-BCD3-C93293CAF00E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{55AF4BC1-099A-4190-8C57-DD8305CF9ADB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{55AF4BC1-099A-4190-8C57-DD8305CF9ADB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{55AF4BC1-099A-4190-8C57-DD8305CF9ADB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{55AF4BC1-099A-4190-8C57-DD8305CF9ADB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

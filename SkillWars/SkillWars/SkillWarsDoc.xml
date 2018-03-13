@@ -6,8 +6,11 @@
     <members>
         <member name="M:SkillWars.Controllers.ValuesController.Get">
             <summary>
-            Create new poll
+            Get all
             </summary>
+            <remarks>
+            Here we can get all values
+            </remarks>
             <returns></returns>
             <response code="500">Internal error on server</response>
             <response code="403">Data is not valid</response>
