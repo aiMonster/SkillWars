@@ -9,7 +9,16 @@ namespace SkillWars.Controllers
     [Route("api/[controller]")]
     public class ValuesController : Controller
     {
-        // GET api/values
+        /// <summary>
+        /// Get all
+        /// </summary>
+        /// <remarks>
+        /// Here we can get all values
+        /// </remarks>
+        /// <returns></returns>
+        /// <response code="500">Internal error on server</response>
+        /// <response code="403">Data is not valid</response>
+        /// <response code="200">Success</response>
         [HttpGet]
         public IEnumerable<string> Get()
         {

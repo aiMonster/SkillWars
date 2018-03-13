@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>SkillWars</name>
+    </assembly>
+    <members>
+        <member name="M:SkillWars.Controllers.ValuesController.Get">
+            <summary>
+            Create new poll
+            </summary>
+            <returns></returns>
+            <response code="500">Internal error on server</response>
+            <response code="403">Data is not valid</response>
+            <response code="200">Success</response>
+        </member>
+    </members>
+</doc>
