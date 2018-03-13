@@ -2,9 +2,13 @@
   "iisSettings": {
     "windowsAuthentication": false,
     "anonymousAuthentication": true,
-    "iisExpress": {
-      "applicationUrl": "http://localhost:53184/",
+    "iis": {
+      "applicationUrl": "http://localhost/SkillWars",
       "sslPort": 0
+    },
+    "iisExpress": {
+      "applicationUrl": "https://localhost:44316/",
+      "sslPort": 44316
     }
   },
   "profiles": {
@@ -17,7 +21,7 @@
       }
     },
     "SkillWars": {
-      "commandName": "Project",
+      "commandName": "IISExpress",
       "launchBrowser": true,
       "launchUrl": "api/values",
       "environmentVariables": {
