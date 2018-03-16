@@ -9,12 +9,17 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="wwwroot\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.5" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication" Version="2.0.3" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="2.0.0" />
+    <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="5.2.1" />
+    <PackageReference Include="Serilog" Version="2.6.0" />
+    <PackageReference Include="Serilog.Extensions.Logging" Version="2.0.2" />
+    <PackageReference Include="Serilog.Sinks.RollingFile" Version="3.3.0" />
+    <PackageReference Include="Serilog.Sinks.Slack" Version="1.2.63" />
+    <PackageReference Include="Serilog.Sinks.Slack.Core" Version="0.1.4-beta" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="1.1.0" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="5.2.1" />
   </ItemGroup>
 
   <ItemGroup>
@@ -22,7 +27,20 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Include="wwwroot\EmailHtmlForms\Html\ConfirmEmail.html" />
+    <None Include="wwwroot\EmailHtmlForms\Html\EmailConfirmed.html" />
+    <None Include="wwwroot\EmailHtmlForms\Html\PasswordRestored.html" />
+    <None Include="wwwroot\EmailHtmlForms\Html\RestorePassword.html" />
+    <None Include="wwwroot\EmailHtmlForms\Text\ConfirmEmail.xml" />
+    <None Include="wwwroot\EmailHtmlForms\Text\EmailConfirmed.xml" />
+    <None Include="wwwroot\EmailHtmlForms\Text\PasswordRestored.xml" />
+    <None Include="wwwroot\EmailHtmlForms\Text\RestorePassword.xml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Common\Common.csproj" />
     <ProjectReference Include="..\DataAccessLayer\DataAccessLayer.csproj" />
+    <ProjectReference Include="..\Services\Services.csproj" />
   </ItemGroup>
 
 </Project>

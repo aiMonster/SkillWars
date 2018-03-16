@@ -4,16 +4,97 @@
         <name>SkillWars</name>
     </assembly>
     <members>
-        <member name="M:SkillWars.Controllers.ValuesController.Get">
+        <member name="M:SkillWars.Controllers.LoginController.Register(Common.DTO.Login.RegistrationDTO)">
             <summary>
-            Get all
+            Registration
             </summary>
             <remarks>
-            Here we can get all values
+            Here we can register new user
             </remarks>
             <returns></returns>
             <response code="500">Internal error on server</response>
-            <response code="403">Data is not valid</response>
+            <response code="400">Bad request</response>
+            <response code="200">Success</response>
+        </member>
+        <member name="M:SkillWars.Controllers.LoginController.SteamRegister(Common.DTO.Login.SteamRegistrationDTO)">
+            <summary>
+            Registration by steam
+            </summary>
+            <remarks>
+            Here we can register new user by steam
+            </remarks>
+            <returns></returns>
+            <response code="500">Internal error on server</response>
+            <response code="400">Bad request</response>
+            <response code="404">User wiht such id is not found</response>
+            <response code="200">Success</response>
+        </member>
+        <member name="M:SkillWars.Controllers.LoginController.ConfirmEmail(System.String)">
+            <summary>
+            Confirming email
+            </summary>
+            <remarks>
+            Here we can confirm email by token that was sent on email
+            </remarks>
+            <returns></returns>
+            <response code="500">Internal error on server</response>
+            <response code="400">Bad request</response>
+            <response code="403">Email is already confirmed</response>
+            <response code="200">Success</response>
+        </member>
+        <member name="M:SkillWars.Controllers.LoginController.Token(Common.DTO.Login.LoginRequest)">
+            <summary>
+            Getting token
+            </summary>
+            <remarks>
+            Here we can get token to get access for authorithed methods
+            </remarks>
+            <returns></returns>
+            <response code="500">Internal error on server</response>
+            <response code="400">Bad request</response>
+            <response code="404">Iinvalid username or password</response>
+            <response code="403">Email is not confirmed</response>
+            <response code="200">Success</response>
+        </member>
+        <member name="M:SkillWars.Controllers.LoginController.TokenBySteam(System.String)">
+            <summary>
+            Getting token by steam id
+            </summary>
+            <remarks>
+            Here we can get token to get access for authorithed methods by steam id
+            </remarks>
+            <returns></returns>
+            <response code="500">Internal error on server</response>
+            <response code="400">Bad request</response>
+            <response code="404">User with such id not found on steam</response>
+            <response code="403">Email is not confirmed or not set</response>
+            <response code="200">Left to register email</response>
+            <response code="200">Success</response>
+        </member>
+        <member name="M:SkillWars.Controllers.LoginController.RestorePassword(System.String)">
+            <summary>
+            Restoring password
+            </summary>
+            <remarks>
+            Here we can restore password if user forgot it
+            </remarks>
+            <returns></returns>
+            <response code="500">Internal error on server</response>
+            <response code="404">User with such email is not found</response>
+            <response code="400">Bad request</response>
+            <response code="200">Success</response>
+        </member>
+        <member name="M:SkillWars.Controllers.LoginController.RestorePasswordConfirm(Common.DTO.Login.RestorePasswordRequest)">
+            <summary>
+            Restoring password confirmation
+            </summary>
+            <remarks>
+            Here we can restore password by got on email token
+            </remarks>
+            <returns></returns>
+            <response code="500">Internal error on server</response>
+            <response code="404">User or token is not found</response>
+            <response code="400">Bad request</response>
             <response code="200">Success</response>
         </member>
     </members>

@@ -4,9 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Services
+namespace Common.DTO.Steam
 {
-    public class Class1
+    public class SteamPlayerSummaryResponse
     {
+        public List<SteamPlayerSummaryDto> Players { get; set; }
     }
 }

@@ -31,6 +31,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -40,13 +41,28 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DTO\Account\UserInfo.cs" />
+    <Compile Include="DTO\Communication\Error.cs" />
+    <Compile Include="DTO\Communication\Response.cs" />
+    <Compile Include="DTO\Login\LoginRequest.cs" />
+    <Compile Include="DTO\Login\RegistrationDTO.cs" />
+    <Compile Include="DTO\Login\RestorePasswordRequest.cs" />
+    <Compile Include="DTO\Login\SteamRegistrationDTO.cs" />
+    <Compile Include="DTO\Login\TokenResponse.cs" />
+    <Compile Include="DTO\Steam\SteamPlayerSummaryDto.cs" />
+    <Compile Include="DTO\Steam\SteamPlayerSummaryResponse.cs" />
+    <Compile Include="DTO\Steam\SteamPlayerSummaryRootObject.cs" />
+    <Compile Include="Entity\TokenEntity.cs" />
+    <Compile Include="Entity\UserEntity.cs" />
+    <Compile Include="Enums\Languages.cs" />
+    <Compile Include="Enums\OperationResults.cs" />
+    <Compile Include="Enums\Roles.cs" />
+    <Compile Include="Helpers\SkillWarsEncoder.cs" />
+    <Compile Include="Interfaces\Services\IEmailService.cs" />
+    <Compile Include="Interfaces\Services\IHtmlGeneratorService.cs" />
+    <Compile Include="Interfaces\Services\ILoginService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="DTO\" />
-    <Folder Include="Enums\" />
-    <Folder Include="Helpers\" />
-    <Folder Include="Interfaces\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

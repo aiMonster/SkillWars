@@ -4,9 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DataAccessLayer
+namespace Common.Enums
 {
-    public class Class1
+    public enum OperationResults
     {
+        Fail,
+        Success
     }
 }

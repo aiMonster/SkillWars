@@ -4,9 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace WebSocketLayer
+namespace Common.Enums
 {
-    public class Class1
+    public enum Roles
     {
+        User,
+        Admin
     }
 }
