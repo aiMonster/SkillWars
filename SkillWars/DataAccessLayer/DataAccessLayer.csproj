@@ -115,22 +115,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Context\SkillWarsContext.cs" />
-    <Compile Include="Migrations\20180313174048_Initial.cs" />
-    <Compile Include="Migrations\20180313174048_Initial.designer.cs">
-      <DependentUpon>20180313174048_Initial.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\20180315145015_language.cs" />
-    <Compile Include="Migrations\20180315145015_language.designer.cs">
-      <DependentUpon>20180315145015_language.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\20180315164051_role.cs" />
-    <Compile Include="Migrations\20180315164051_role.designer.cs">
-      <DependentUpon>20180315164051_role.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\20180315200453_ispasswordset.cs" />
-    <Compile Include="Migrations\20180315200453_ispasswordset.designer.cs">
-      <DependentUpon>20180315200453_ispasswordset.cs</DependentUpon>
-    </Compile>
     <Compile Include="Migrations\SkillWarsContextModelSnapshot.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

@@ -88,8 +88,10 @@ namespace SkillWars
             services.AddSingleton<IHtmlGeneratorService, HtmlGeneratorService>();
             
             //transient services
-            services.AddTransient<IEmailService, EmailService>();            
+            services.AddTransient<IEmailService, EmailService>();
 
+
+            services.AddCors();
             services.AddMvc(options =>
             {
                 options.Filters.Add(new RequireHttpsAttribute());
@@ -111,6 +113,7 @@ namespace SkillWars
 
             htmlGeneratorService.SetPath(Path.Combine(env.ContentRootPath, "wwwroot/EmailHtmlForms"));
 
+            app.UseCors(builder => builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
             app.UseMvc();
         }
 
