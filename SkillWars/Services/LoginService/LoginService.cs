@@ -319,15 +319,20 @@ namespace Services.LoginService
             return tokenResponse;
         }
 
-        public async Task<Response<string>> RestorePassword(string email)
+        public async Task<Response<string>> RestorePasswordByEmail(string email)
         {
-            _logger.LogDebug($"Restoring password request: " + email);
+            _logger.LogDebug($"Restoring password by email request: " + email);
             Response<string> response = new Response<string>();
 
             var user = await _context.Users.FirstOrDefaultAsync(p => p.Email == email);
             if (user == null)
             {
                 response.Error = new Error(404, "User not found");
+                return response;
+            }
+            if(!user.IsEmailConfirmed)
+            {
+                response.Error = new Error(400, "Email is not confirmed");
                 return response;
             }
             response.Data = email;
@@ -351,18 +356,18 @@ namespace Services.LoginService
             }
             catch (Exception ex)
             {
-                _logger.LogError("Couldn't send restoring email for " + user.Email + "\nException:\n" + ex.Message);
+                _logger.LogError("Couldn't send restoring password by email for " + user.Email + "\nException:\n" + ex.Message);
                 response.Error = new Error(500, "Couldn't send, write for developers");
                 return response;
             }
-            _logger.LogDebug($"Restoring password email successfully sended: {user.Email}");
+            _logger.LogDebug($"Restoring password by email successfully sended: {user.Email}");
 
             return response;
         }
 
-        public async Task<Response<string>> RestorePasswordConfirm(RestorePasswordRequest request)
+        public async Task<Response<string>> RestorePasswordByEmailConfirm(RestorePasswordRequest request)
         {
-            _logger.LogDebug($"Restoring password" );
+            _logger.LogDebug($"Restoring password by email" );
             Response<string> response = new Response<string>();
 
             var token = await _context.Tokens.Where(p => p.Id == request.Token)
@@ -374,9 +379,9 @@ namespace Services.LoginService
                 return response;
             }
 
-            if (token.User == null)
+            if (token.User == null || !token.User.IsEmailConfirmed)
             {
-                response.Error = new Error(404, "User not found");
+                response.Error = new Error(404, "User not found or email is not confirmed");
                 return response;
             }
 
@@ -392,7 +397,7 @@ namespace Services.LoginService
             _context.Tokens.Remove(token);
             await _context.SaveChangesAsync();
 
-            _logger.LogDebug($"User restored password: {token.User.Email}");
+            _logger.LogDebug($"User restored password by email: {token.User.Email}");
             try
             {
                 var content = await _htmlGeneratorService.PasswordRestored(token.User.Language);
@@ -401,13 +406,119 @@ namespace Services.LoginService
             }
             catch (Exception ex)
             {
-                _logger.LogError("Couldn't send that password restored for " + token.User.Email + "\nException:\n" + ex.Message);
+                _logger.LogError("Couldn't send that password restored by email for " + token.User.Email + "\nException:\n" + ex.Message);
+                return response;
+            }
+            _logger.LogDebug($"Password restored successfully by email, sended to: {token.User.Email}");
+
+            return response;
+        }
+
+        public async Task<Response<string>> RestorePasswordByPhone(string phoneNumber)
+        {
+            _logger.LogDebug($"Restoring password by phone request: " + phoneNumber);
+            Response<string> response = new Response<string>();
+
+            var user = await _context.Users.FirstOrDefaultAsync(p => p.PhoneNumber == phoneNumber);
+            if (user == null)
+            {
+                response.Error = new Error(404, "User not found");
+                return response;
+            }
+            if(!user.IsPhoneNumberConfirmed)
+            {
+                response.Error = new Error(400, "Phone number is not confirmed");
+                return response;
+            }
+
+            response.Data = phoneNumber;
+
+            //generating identity token
+            string confirmationToken;
+            while(true)
+            {
+                Random rnd = new Random();
+                confirmationToken = rnd.Next(100000, 999999).ToString();
+                if(!_context.Tokens.Any(p => p.Id == confirmationToken))
+                {
+                    break;
+                }
+            }
+
+            await _context.Tokens.AddAsync(new TokenEntity
+            {
+                Id = confirmationToken, 
+                UserId = user.Id,
+                ExpirationDate = DateTime.UtcNow.AddDays(Convert.ToInt32(_configuration.GetSection("TokenExistenceDays")["RestorePassword"]))
+            });    
+            await _context.SaveChangesAsync();
+
+            _logger.LogDebug($"User found, sending sms on phone: {user.PhoneNumber}");
+            try
+            {
+                var content = _configuration.GetSection("RestorePasswordSms")[user.Language.ToString()];
+                var title = "PhoneSms";
+                await _emailService.SendMail(user.Email, content.Replace("#token",confirmationToken), title);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Couldn't send restoring sms for " + user.PhoneNumber + "\nException:\n" + ex.Message);
+                response.Error = new Error(500, "Couldn't send, write for developers");
+                return response;
+            }
+            _logger.LogDebug($"Restoring password by phone successfully sended: {user.Email}");
+
+            return response;
+        }
+
+        public async Task<Response<string>> RestorePasswordByPhoneConfirm(RestorePasswordRequest request)
+        {
+            _logger.LogDebug($"Restoring password by phone");
+            Response<string> response = new Response<string>();
+
+            var token = await _context.Tokens.Where(p => p.Id == request.Token)
+                  .Include(p => p.User).FirstOrDefaultAsync();
+
+            if (token == null)
+            {
+                response.Error = new Error(404, "Token is not valid");
+                return response;
+            }
+
+            if (token.User == null || !token.User.IsPhoneNumberConfirmed)
+            {
+                response.Error = new Error(404, "User not found or phone number is not confirmed");
+                return response;
+            }
+
+            if (token.ExpirationDate < DateTime.UtcNow)
+            {
+                _context.Tokens.Remove(token);
+                response.Error = new Error(400, "Confirmation date is over");
+                return response;
+            }
+            response.Data = token.User.PhoneNumber;
+
+            token.User.Password = SkillWarsEncoder.Encript(request.Password);
+            _context.Tokens.Remove(token);
+            await _context.SaveChangesAsync();
+
+            _logger.LogDebug($"User restored password: {token.User.PhoneNumber}");
+            try
+            {
+                var content = _configuration.GetSection("PasswordRestoredSms")[token.User.Language.ToString()];                
+                await _emailService.SendMail(token.User.Email, content, "phoneSms");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Couldn't send that password restored for " + token.User.PhoneNumber + "\nException:\n" + ex.Message);
                 return response;
             }
             _logger.LogDebug($"Password restored successfully sended: {token.User.Email}");
 
             return response;
         }
+
 
         //================== FOR TESTS ONLY ========================
         public async Task<List<UserInfo>> GetAllUsers()

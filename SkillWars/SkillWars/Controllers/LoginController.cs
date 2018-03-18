@@ -164,25 +164,25 @@ namespace SkillWars.Controllers
         }
 
         /// <summary>
-        /// Restoring password
+        /// Restoring password by email
         /// </summary>
         /// <remarks>
-        /// Here we can restore password if user forgot it
+        /// Here we can restore password by email if user forgot it
         /// </remarks>
         /// <returns></returns>
         /// <response code="500">Internal error on server</response>
         /// <response code="404">User with such email is not found</response>
         /// <response code="400">Bad request</response>
         /// <response code="200">Success</response>
-        [HttpPut("ForgotPassword")]
-        public async Task<IActionResult> RestorePassword([FromBody] string requestEmail)
+        [HttpPut("RestorePasswordByEmail")]
+        public async Task<IActionResult> RestorePasswordByEmail([FromBody] string email)
         {
-            if(String.IsNullOrEmpty(requestEmail))
+            if(String.IsNullOrEmpty(email))
             {
                 return BadRequest();
             }
 
-            var response = await _loginService.RestorePassword(requestEmail);
+            var response = await _loginService.RestorePasswordByEmail(email);
             if (response.Error != null)
             {
                 return StatusCode(response.Error.ErrorCode, response.Error);
@@ -191,7 +191,7 @@ namespace SkillWars.Controllers
         }
 
         /// <summary>
-        /// Restoring password confirmation
+        /// Restoring password by email confirmation
         /// </summary>
         /// <remarks>
         /// Here we can restore password by got on email token
@@ -201,15 +201,69 @@ namespace SkillWars.Controllers
         /// <response code="404">User or token is not found</response>
         /// <response code="400">Bad request</response>
         /// <response code="200">Success</response>
-        [HttpPut("ForgotPasswordConfirm")]
-        public async Task<IActionResult> RestorePasswordConfirm([FromBody] RestorePasswordRequest request)
+        [HttpPut("RestorePasswordByEmailConfirm")]
+        public async Task<IActionResult> RestorePasswordByEmailConfirm([FromBody] RestorePasswordRequest request)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            var response = await _loginService.RestorePasswordConfirm(request);
+            var response = await _loginService.RestorePasswordByEmailConfirm(request);
+            if (response.Error != null)
+            {
+                return StatusCode(response.Error.ErrorCode, response.Error);
+            }
+            return Ok(response.Data);
+        }
+
+        /// <summary>
+        /// Restoring password by phone number
+        /// </summary>
+        /// <remarks>
+        /// Here we can restore password by sms if user forgot it
+        /// </remarks>
+        /// <returns></returns>
+        /// <response code="500">Internal error on server</response>
+        /// <response code="404">User with such phone number is not found</response>
+        /// <response code="400">Bad request</response>
+        /// <response code="200">Success</response>
+        [HttpPut("RestorePasswordByPhone")]
+        public async Task<IActionResult> RestorePasswordByPhone([FromBody] string phoneNumber)
+        {
+            if (String.IsNullOrEmpty(phoneNumber))
+            {
+                return BadRequest();
+            }
+
+            var response = await _loginService.RestorePasswordByPhone(phoneNumber);
+            if (response.Error != null)
+            {
+                return StatusCode(response.Error.ErrorCode, response.Error);
+            }
+            return Ok(response.Data);
+        }
+
+        /// <summary>
+        /// Restoring password by phone confirmation
+        /// </summary>
+        /// <remarks>
+        /// Here we can restore password by got on phone code
+        /// </remarks>
+        /// <returns></returns>
+        /// <response code="500">Internal error on server</response>
+        /// <response code="404">User or token is not found</response>
+        /// <response code="400">Bad request</response>
+        /// <response code="200">Success</response>
+        [HttpPut("RestorePasswordByPhoneConfirm")]
+        public async Task<IActionResult> RestorePasswordByPhoneConfirm([FromBody] RestorePasswordRequest request)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var response = await _loginService.RestorePasswordByPhoneConfirm(request);
             if (response.Error != null)
             {
                 return StatusCode(response.Error.ErrorCode, response.Error);

@@ -10,17 +10,20 @@ namespace Services.SendingService
 {
     public class HtmlGeneratorService : IHtmlGeneratorService
     {
-        private string _emailHtmlFormsPath;  
+        private string _emailHtmlFormsPath;
+        private XmlDocument _xmlDocument;
         private readonly ILogger _logger;
 
         public HtmlGeneratorService(ILoggerFactory loggerFactory)
         {
-            _logger = loggerFactory.CreateLogger<HtmlGeneratorService>();
+            _logger = loggerFactory.CreateLogger<HtmlGeneratorService>();            
         }
 
         public void SetPath(string path)
         {
             _emailHtmlFormsPath = path;
+            _xmlDocument = new XmlDocument();
+            _xmlDocument.Load(_emailHtmlFormsPath + "/EmailText.xml");
         }
 
 
@@ -28,12 +31,9 @@ namespace Services.SendingService
         {
             _logger.LogDebug("Generating html for ConfirmEmail");
             StringBuilder builder = new StringBuilder(File.ReadAllText(_emailHtmlFormsPath + "/Html/ConfirmEmail.html"));
-
-            XmlDocument doc = new XmlDocument();
-            doc.Load(_emailHtmlFormsPath + "/Text/ConfirmEmail.xml");          
-
+            
             builder.Replace("#link", link);
-            builder.Replace("#text", doc.DocumentElement.SelectSingleNode("/Root/ButtonText").Attributes[language.ToString()].Value);
+            builder.Replace("#text", _xmlDocument.DocumentElement.SelectSingleNode("/Root/ButtonConfirm").Attributes[language.ToString()].Value);
 
             return builder.ToString();         
         }
@@ -43,11 +43,10 @@ namespace Services.SendingService
             _logger.LogDebug("Generating html for Restoring password");
             StringBuilder builder = new StringBuilder(File.ReadAllText(_emailHtmlFormsPath + "/Html/RestorePassword.html"));
 
-            XmlDocument doc = new XmlDocument();
-            doc.Load(_emailHtmlFormsPath + "/Text/RestorePassword.xml");
+            
 
             builder.Replace("#link", link);
-            builder.Replace("#text", doc.DocumentElement.SelectSingleNode("/Root/ButtonText").Attributes[language.ToString()].Value);
+            builder.Replace("#text", _xmlDocument.DocumentElement.SelectSingleNode("/Root/ButtonRestore").Attributes[language.ToString()].Value);
 
             return builder.ToString();
         }
@@ -56,10 +55,8 @@ namespace Services.SendingService
         {
             _logger.LogDebug("Generating html for EmailConfirmed");
             StringBuilder builder = new StringBuilder(File.ReadAllText(_emailHtmlFormsPath + "/Html/EmailConfirmed.html"));
-
-            XmlDocument doc = new XmlDocument();
-            doc.Load(_emailHtmlFormsPath + "/Text/EmailConfirmed.xml");            
-            builder.Replace("#MainText", doc.DocumentElement.SelectSingleNode("/Root/MainText").Attributes[language.ToString()].Value);
+                  
+            builder.Replace("#MainText", _xmlDocument.DocumentElement.SelectSingleNode("/Root/EmailConfirmed").Attributes[language.ToString()].Value);
             return builder.ToString();
         }
 
@@ -68,9 +65,7 @@ namespace Services.SendingService
             _logger.LogDebug("Generating html for PasswordRestored");
             StringBuilder builder = new StringBuilder(File.ReadAllText(_emailHtmlFormsPath + "/Html/PasswordRestored.html"));
 
-            XmlDocument doc = new XmlDocument();
-            doc.Load(_emailHtmlFormsPath + "/Text/PasswordRestored.xml");
-            builder.Replace("#MainText", doc.DocumentElement.SelectSingleNode("/Root/MainText").Attributes[language.ToString()].Value);
+            builder.Replace("#MainText", _xmlDocument.DocumentElement.SelectSingleNode("/Root/PasswordRestored").Attributes[language.ToString()].Value);
             return builder.ToString();
         }
 

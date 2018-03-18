@@ -33,13 +33,14 @@ namespace SkillWars
         {
             var builder = new ConfigurationBuilder()
                 .SetBasePath(env.ContentRootPath)
-                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)           
-                .AddJsonFile("EmailSubjects.json", optional: true);
+                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                .AddJsonFile("EmailSubjects.json", optional: true)
+                .AddJsonFile("PhoneSms.json", optional: true);
                 //.AddEnvironmentVariables();
-            Configuration = builder.Build();           
+            Configuration = builder.Build();            
         }        
         
-        public IConfigurationRoot Configuration { get; }
+        public IConfigurationRoot Configuration { get; }        
         
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
@@ -81,12 +82,12 @@ namespace SkillWars
 
             services.AddDbContext<SkillWarsContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
-
+            
             //singleton services
-            services.AddSingleton(_ => Configuration);            
+            services.AddSingleton(_ => Configuration);           
             services.AddSingleton<ILoginService, LoginService>();
             services.AddSingleton<IHtmlGeneratorService, HtmlGeneratorService>();
-            
+
             //transient services
             services.AddTransient<IEmailService, EmailService>();
 

@@ -8,6 +8,6 @@ namespace DataAccessLayer.Context
         public SkillWarsContext(DbContextOptions<SkillWarsContext> options) : base(options) { }
 
         public DbSet<UserEntity> Users { get; set; }
-        public DbSet<TokenEntity> Tokens { get; set; }
+        public DbSet<TokenEntity> Tokens { get; set; }       
     }
 }

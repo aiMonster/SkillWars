@@ -1,0 +1,7 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Root>
+  <ButtonConfirm Eng="Cofirm" Ukr="Підтвердити" Rus="Подтвердить"/>
+  <EmailConfirmed Eng="Successfully confirmed" Ukr="Емейл підтвердженно" Rus="Успешно подтвердил"/>
+  <PasswordRestored Eng="Successfully restored" Ukr="Пароль відновлено" Rus="Пароль восстановлено"/>
+  <ButtonRestore Eng="Restore" Ukr="Віднвити" Rus="Восстановить"/>
+</Root>

@@ -1,0 +1,12 @@
+﻿{
+  "RestorePasswordSms": {
+    "Ukr": "Відноілння паролю #token",
+    "Eng": "Restoring password #token",
+    "Rus": "Восстановления пароля #token"
+  },
+  "PasswordRestoredSms": {
+    "Ukr": "Відноілння паролю було успішне",
+    "Eng": "Restoring password was successfull",
+    "Rus": "Восстановления пароля прошло успешно"
+  }
+}

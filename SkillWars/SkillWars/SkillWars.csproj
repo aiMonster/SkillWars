@@ -31,10 +31,6 @@
     <None Include="wwwroot\EmailHtmlForms\Html\EmailConfirmed.html" />
     <None Include="wwwroot\EmailHtmlForms\Html\PasswordRestored.html" />
     <None Include="wwwroot\EmailHtmlForms\Html\RestorePassword.html" />
-    <None Include="wwwroot\EmailHtmlForms\Text\ConfirmEmail.xml" />
-    <None Include="wwwroot\EmailHtmlForms\Text\EmailConfirmed.xml" />
-    <None Include="wwwroot\EmailHtmlForms\Text\PasswordRestored.xml" />
-    <None Include="wwwroot\EmailHtmlForms\Text\RestorePassword.xml" />
   </ItemGroup>
 
   <ItemGroup>
