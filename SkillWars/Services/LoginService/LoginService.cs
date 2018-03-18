@@ -12,7 +12,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
-using Services.SendingService;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
@@ -28,14 +27,16 @@ namespace Services.LoginService
         private readonly SkillWarsContext _context;
         private readonly IConfigurationRoot _configuration;
         private readonly IEmailService _emailService;
+        private readonly ISmsService _smsService;
         private readonly ILogger _logger;
         private readonly IHtmlGeneratorService _htmlGeneratorService;
 
-        public LoginService(SkillWarsContext context, IConfigurationRoot configurtation, IEmailService emailService, ILoggerFactory loggerFactory, IHtmlGeneratorService htmlGeneratorService)
+        public LoginService(SkillWarsContext context, IConfigurationRoot configurtation, IEmailService emailService, ILoggerFactory loggerFactory, IHtmlGeneratorService htmlGeneratorService, ISmsService smsService)
         {
             _context = context;
             _configuration = configurtation;
             _emailService = emailService;
+            _smsService = smsService;
             _logger = loggerFactory.CreateLogger<LoginService>();
             _htmlGeneratorService = htmlGeneratorService;
         }
@@ -84,7 +85,7 @@ namespace Services.LoginService
             catch(Exception ex)
             {
                 _logger.LogError("Couldn't send confirmaiton regisratigon email for " + user.Email + "\nException:\n" + ex.Message);
-                response.Error = new Error(500, "Couldn't send, write for developers");
+                response.Error = new Error(500, "Couldn't send, write for developers - " + ex.Message);
                 return response;
             }
             _logger.LogDebug($"Confirmation email successfully sended: {request.Email}");
@@ -146,10 +147,10 @@ namespace Services.LoginService
             return response;
         }
 
-        public async Task<Response<UserInfo>> ConfirmEmail(string confirmationToken)
+        public async Task<Response<UserProfile>> ConfirmEmail(string confirmationToken)
         {
             _logger.LogDebug("Confirming new email");
-            var response = new Response<UserInfo>();
+            var response = new Response<UserProfile>();
             var token = await _context.Tokens.Where(t => t.Id == confirmationToken)
                 .Include(t => t.User).FirstOrDefaultAsync();
 
@@ -175,7 +176,7 @@ namespace Services.LoginService
             token.User.IsEmailConfirmed = true;
             _context.Tokens.Remove(token);
             await _context.SaveChangesAsync();
-            response.Data = new UserInfo(token.User);
+            response.Data = new UserProfile(token.User);
 
             _logger.LogDebug($"User confirmed email: {token.User.Email}");
             try
@@ -414,6 +415,7 @@ namespace Services.LoginService
             return response;
         }
 
+        /*Change email to phone number*/
         public async Task<Response<string>> RestorePasswordByPhone(string phoneNumber)
         {
             _logger.LogDebug($"Restoring password by phone request: " + phoneNumber);
@@ -457,8 +459,8 @@ namespace Services.LoginService
             try
             {
                 var content = _configuration.GetSection("RestorePasswordSms")[user.Language.ToString()];
-                var title = "PhoneSms";
-                await _emailService.SendMail(user.Email, content.Replace("#token",confirmationToken), title);
+                ////==== Change email to phone number
+                await _smsService.SendSms(user.Email, content.Replace("#token", confirmationToken));
             }
             catch (Exception ex)
             {
@@ -470,7 +472,7 @@ namespace Services.LoginService
 
             return response;
         }
-
+        /*Change email to phone number*/
         public async Task<Response<string>> RestorePasswordByPhoneConfirm(RestorePasswordRequest request)
         {
             _logger.LogDebug($"Restoring password by phone");
@@ -506,8 +508,9 @@ namespace Services.LoginService
             _logger.LogDebug($"User restored password: {token.User.PhoneNumber}");
             try
             {
-                var content = _configuration.GetSection("PasswordRestoredSms")[token.User.Language.ToString()];                
-                await _emailService.SendMail(token.User.Email, content, "phoneSms");
+                ////==== Change email to phone number
+                var content = _configuration.GetSection("PasswordRestoredSms")[token.User.Language.ToString()];               
+                await _smsService.SendSms(token.User.Email, content);
             }
             catch (Exception ex)
             {
@@ -521,14 +524,14 @@ namespace Services.LoginService
 
 
         //================== FOR TESTS ONLY ========================
-        public async Task<List<UserInfo>> GetAllUsers()
+        public async Task<List<UserProfile>> GetAllUsers()
         {
-            return await _context.Users.Select(u => new UserInfo(u)).ToListAsync();
+            return await _context.Users.Select(u => new UserProfile(u)).ToListAsync();
         }
 
-        public async Task<Response<UserInfo>> RemoveUserById(int userId)
+        public async Task<Response<UserProfile>> RemoveUserById(int userId)
         {
-            var response = new Response<UserInfo>();
+            var response = new Response<UserProfile>();
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
             if(user == null)
             {
@@ -537,7 +540,7 @@ namespace Services.LoginService
             }
             _context.Remove(user);
             await _context.SaveChangesAsync();
-            response.Data = new UserInfo(user);
+            response.Data = new UserProfile(user);
             return response;
         }
 

@@ -1,4 +1,5 @@
-﻿using Common.Enums;
+﻿using Common.Attributes;
+using Common.Enums;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -20,6 +21,7 @@ namespace Common.DTO.Login
         [Required]
         public string SteamId { get; set; }
 
+        [Language]
         public Languages Language { get; set; }
     }
 }

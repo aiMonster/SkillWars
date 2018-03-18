@@ -24,6 +24,7 @@ using Services.SendingService;
 using SkillWars.Extensions;
 using Swashbuckle.AspNetCore.Swagger;
 using Microsoft.IdentityModel.Tokens;
+using Services.AccountService;
 
 namespace SkillWars
 {
@@ -90,6 +91,8 @@ namespace SkillWars
 
             //transient services
             services.AddTransient<IEmailService, EmailService>();
+            services.AddTransient<ISmsService, SmsService>();
+            services.AddTransient<IAccountService, AccountService>();
 
 
             services.AddCors();

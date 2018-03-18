@@ -121,14 +121,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AccountService\AccountService.cs" />
     <Compile Include="LoginService\AuthOptions.cs" />
     <Compile Include="LoginService\LoginService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SendingService\EmailService.cs" />
     <Compile Include="SendingService\HtmlGeneratorService.cs" />
+    <Compile Include="SendingService\SmsService.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="AccountService\" />
     <Folder Include="PaymentService\" />
     <Folder Include="TimeredFunctionService\" />
   </ItemGroup>

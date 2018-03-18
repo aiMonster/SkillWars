@@ -41,7 +41,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DTO\Account\UserInfo.cs" />
+    <Compile Include="Attributes\ChangePasswordAttribute.cs" />
+    <Compile Include="Attributes\LanguageAttribute.cs" />
+    <Compile Include="DTO\Account\ChangePasswordRequest.cs" />
+    <Compile Include="DTO\Account\UserProfile.cs" />
     <Compile Include="DTO\Communication\Error.cs" />
     <Compile Include="DTO\Communication\Response.cs" />
     <Compile Include="DTO\Login\LoginRequest.cs" />
@@ -58,9 +61,11 @@
     <Compile Include="Enums\OperationResults.cs" />
     <Compile Include="Enums\Roles.cs" />
     <Compile Include="Helpers\SkillWarsEncoder.cs" />
+    <Compile Include="Interfaces\Services\IAccountService.cs" />
     <Compile Include="Interfaces\Services\IEmailService.cs" />
     <Compile Include="Interfaces\Services\IHtmlGeneratorService.cs" />
     <Compile Include="Interfaces\Services\ILoginService.cs" />
+    <Compile Include="Interfaces\Services\ISmsService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup />

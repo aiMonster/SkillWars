@@ -1,4 +1,5 @@
-﻿using Common.Enums;
+﻿using Common.Attributes;
+using Common.Enums;
 using System.ComponentModel.DataAnnotations;
 
 namespace Common.DTO.Login
@@ -33,6 +34,7 @@ namespace Common.DTO.Login
         [Compare("Password")]
         public string ConfirmPassword { get; set; }
 
+        [Language]
         public Languages Language { get; set; }
 
     }

@@ -11,7 +11,7 @@ namespace Common.Interfaces.Services
     {
         Task<Response<string>> Register(RegistrationDTO request);
         Task<Response<string>> SteamRegister(SteamRegistrationDTO request);
-        Task<Response<UserInfo>> ConfirmEmail(string confirmationToken);
+        Task<Response<UserProfile>> ConfirmEmail(string confirmationToken);
         Task<TokenResponse> GetToken(ClaimsIdentity identity);
         Task<Response<ClaimsIdentity>> GetIdentity(string login, string password);
         Task<Response<ClaimsIdentity>> GetIdentity(string steamId);
@@ -22,7 +22,7 @@ namespace Common.Interfaces.Services
         Task<Response<string>> RestorePasswordByPhoneConfirm(RestorePasswordRequest request);
 
         //for testing only
-        Task<List<UserInfo>> GetAllUsers();
-        Task<Response<UserInfo>> RemoveUserById(int userId);
+        Task<List<UserProfile>> GetAllUsers();
+        Task<Response<UserProfile>> RemoveUserById(int userId);
     }
 }
