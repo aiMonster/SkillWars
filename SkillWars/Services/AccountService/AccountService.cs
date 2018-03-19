@@ -1,6 +1,7 @@
 ﻿using Common.DTO.Account;
 using Common.DTO.Communication;
 using Common.DTO.Steam;
+using Common.Entity;
 using Common.Enums;
 using Common.Helpers;
 using Common.Interfaces.Services;
@@ -23,12 +24,18 @@ namespace Services.AccountService
         private readonly ILogger _logger;
         private readonly SkillWarsContext _context;
         private readonly IConfigurationRoot _configuration;
+        private readonly IEmailService _emailService;
+        private readonly ISmsService _smsService;      
+        private readonly IHtmlGeneratorService _htmlGeneratorService;
 
-        public AccountService(SkillWarsContext context, ILoggerFactory loggerFactory, IConfigurationRoot configuration)
+        public AccountService(SkillWarsContext context, ILoggerFactory loggerFactory, IConfigurationRoot configuration, IHtmlGeneratorService htmlGeneratorService, ISmsService smsService, IEmailService emailService)
         {
             _logger = loggerFactory.CreateLogger<AccountService>();
             _context = context;
             _configuration = configuration;
+            _emailService = emailService;
+            _smsService = smsService;          
+            _htmlGeneratorService = htmlGeneratorService;
         }
 
         public async Task<UserProfile> GetUserProfile(int userId)
@@ -150,5 +157,225 @@ namespace Services.AccountService
             response.Data = true;
             return response;
         }
-     }
+
+        public async Task<Response<bool>> ChangeEmail(string email, int userId)
+        {
+            _logger.LogDebug($"Changing email - {userId}");
+            var response = new Response<bool>();
+
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
+            if (user == null)
+            {
+                response.Error = new Error(500, "Unexpected error");
+                return response;
+            }
+            if (await _context.Users.AnyAsync(u => u.Email == email))
+            {
+                _logger.LogDebug($"User with such email already exists: {email}");
+                response.Error = new Error(400, "This Email is already used");
+                return response;
+            }
+
+            var confirmationToken = Guid.NewGuid().ToString();
+            await _context.Tokens.AddAsync(new TokenEntity
+            {
+                UserId = user.Id,
+                Id = confirmationToken,
+                ExpirationDate = DateTime.UtcNow.AddDays(Convert.ToInt32(_configuration.GetSection("TokenExistenceDays")["ConfirmEmail"])),
+                AdditionalInfo = email
+            });
+            await _context.SaveChangesAsync();
+
+            _logger.LogDebug($"User requested to change email, left send confirmation email: {email}");
+            try
+            {
+                var apiPath = _configuration["FrontLinks:ChangeEmail"] + confirmationToken;
+                var content = await _htmlGeneratorService.ConfirmEmail(apiPath, user.Language);
+                var title = _configuration.GetSection("ConfirmEmail")[user.Language.ToString()];
+                await _emailService.SendMail(email, content, title);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Couldn't send confirmaiton email for " + email + "\nException:\n" + ex.Message);
+                response.Error = new Error(500, "Couldn't send, write for developers - " + ex.Message);
+                return response;
+            }
+            _logger.LogDebug($"Confirmation email successfully sended: {email}");
+            
+            response.Data = true;
+            return response;
+        }
+
+        public async Task<Response<bool>> ChangeEmailConfirm(string confirmationToken)
+        {
+            _logger.LogDebug("Confirming new email");
+            var response = new Response<bool>();
+            var token = await _context.Tokens.Where(t => t.Id == confirmationToken)
+                .Include(t => t.User).FirstOrDefaultAsync();
+
+            if (token == null)
+            {
+                response.Error = new Error(400, "Token is not valid");
+                return response;
+            }
+
+            if (token.User == null)
+            {
+                response.Error = new Error(404, "User not found");
+                return response;
+            }
+
+            if (token.ExpirationDate < DateTime.UtcNow)
+            {
+                _context.Tokens.Remove(token);
+                response.Error = new Error(400, "Confirmation date is over");
+                return response;
+            }
+
+            if (await _context.Users.AnyAsync(u => u.Email == token.AdditionalInfo))
+            {
+                _logger.LogDebug($"User with such email already exists: {token.AdditionalInfo}");
+                response.Error = new Error(400, "This Email is already used");
+                return response;
+            }
+
+            token.User.Email = token.AdditionalInfo;
+            _context.Tokens.Remove(token);
+            await _context.SaveChangesAsync();
+            response.Data = true;
+
+            _logger.LogDebug($"User confirmed email: {token.User.Email}");
+            try
+            {
+                var content = await _htmlGeneratorService.EmailConfirmed(token.User.Language);
+                var title = _configuration.GetSection("ConfirmEmail")[token.User.Language.ToString()];
+                await _emailService.SendMail(token.User.Email, content, title);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Couldn't send that email confirmed for " + token.User.Email + "\nException:\n" + ex.Message);
+                return response;
+            }
+            _logger.LogDebug($"Email confirmed successfully sended: {token.User.Email}");
+
+            return response;
+        }
+
+        /*Change email to phone number*/
+        public async Task<Response<bool>> ChangeOrAddPhone(string phoneNumber, int userId)
+        {
+            _logger.LogDebug($"Changing or adding phone - {userId}");
+            var response = new Response<bool>();
+
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
+            if (user == null)
+            {
+                response.Error = new Error(500, "Unexpected error");
+                return response;
+            }
+            if (await _context.Users.AnyAsync(u => u.PhoneNumber == phoneNumber))
+            {
+                _logger.LogDebug($"User with such phoneNumber already exists: {phoneNumber}");
+                response.Error = new Error(400, "This Phone Number is already used");
+                return response;
+            }
+
+            //generating identity token
+            string confirmationToken;
+            while (true)
+            {
+                Random rnd = new Random();
+                confirmationToken = rnd.Next(100000, 999999).ToString();
+                if (!_context.Tokens.Any(p => p.Id == confirmationToken))
+                {
+                    break;
+                }
+            }
+
+            await _context.Tokens.AddAsync(new TokenEntity
+            {
+                Id = confirmationToken,
+                UserId = user.Id,
+                AdditionalInfo = phoneNumber,
+                ExpirationDate = DateTime.UtcNow.AddDays(Convert.ToInt32(_configuration.GetSection("TokenExistenceDays")["RestorePassword"]))
+            });
+            await _context.SaveChangesAsync();
+
+            _logger.LogDebug($"User requested to change or add phoneNumber, left send confirmation sms: {phoneNumber}");
+            try
+            {
+                var content = _configuration.GetSection("ChangePhoneNumberSms")[user.Language.ToString()];
+                ////==== Change email to phone number
+                await _smsService.SendSms(user.Email, content.Replace("#token", confirmationToken));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Couldn't send restoring sms for " + user.PhoneNumber + "\nException:\n" + ex.Message);
+                response.Error = new Error(500, "Couldn't send, write for developers");
+                return response;
+            }
+            _logger.LogDebug($"Confirmation email successfully sended: {user.Email}");
+
+            response.Data = true;
+            return response;
+        }
+
+        /*Change email to phone number*/
+        public async Task<Response<bool>> ChangeOrAddPhoneConfirm(string confirmationToken)
+        {
+            _logger.LogDebug("Confirming new phone number");
+            var response = new Response<bool>();
+            var token = await _context.Tokens.Where(t => t.Id == confirmationToken)
+                .Include(t => t.User).FirstOrDefaultAsync();
+
+            if (token == null)
+            {
+                response.Error = new Error(400, "Token is not valid");
+                return response;
+            }
+
+            if (token.User == null)
+            {
+                response.Error = new Error(404, "User not found");
+                return response;
+            }
+
+            if (token.ExpirationDate < DateTime.UtcNow)
+            {
+                _context.Tokens.Remove(token);
+                response.Error = new Error(400, "Confirmation date is over");
+                return response;
+            }
+
+            if (await _context.Users.AnyAsync(u => u.PhoneNumber == token.AdditionalInfo))
+            {
+                _logger.LogDebug($"User with such phone already exists: {token.AdditionalInfo}");
+                response.Error = new Error(400, "This phone number is already used");
+                return response;
+            }
+
+            token.User.Email = token.AdditionalInfo;
+            token.User.IsPhoneNumberConfirmed = true;
+            _context.Tokens.Remove(token);
+            await _context.SaveChangesAsync();
+            response.Data = true;
+
+            _logger.LogDebug($"User confirmed phone number: {token.User.PhoneNumber}");
+            try
+            {
+                ////==== Change email to phone number
+                var content = _configuration.GetSection("PhoneNumberConfirmedSms")[token.User.Language.ToString()];
+                await _smsService.SendSms(token.User.Email, content);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Couldn't send that phone confirmed for " + token.User.PhoneNumber + "\nException:\n" + ex.Message);
+                return response;
+            }
+            _logger.LogDebug($"phone confirmed successfully sended: {token.User.PhoneNumber}");
+
+            return response;
+        }
+    }
+     
 }

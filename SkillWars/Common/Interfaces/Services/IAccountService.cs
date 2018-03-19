@@ -16,5 +16,9 @@ namespace Common.Interfaces.Services
         Task<Response<bool>> ChangeLanguage(Languages language, int userId);
         Task<Response<bool>> ChangeSteamId(string steamId, int userId);
         Task<Response<bool>> ChangePassword(ChangePasswordRequest request, int userId);
+        Task<Response<bool>> ChangeEmail(string email, int userId);
+        Task<Response<bool>> ChangeEmailConfirm(string confirmaitonToken);
+        Task<Response<bool>> ChangeOrAddPhone(string phoneNumber, int userId);
+        Task<Response<bool>> ChangeOrAddPhoneConfirm(string confirmationToken);
     }
 }

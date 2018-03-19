@@ -14,5 +14,6 @@ namespace Common.Entity
         public int UserId { get; set; }
 
         public DateTime ExpirationDate { get; set; }
+        public string AdditionalInfo { get; set; }
     }
 }

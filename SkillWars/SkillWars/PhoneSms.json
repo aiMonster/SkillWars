@@ -8,5 +8,15 @@
     "Ukr": "Відноілння паролю було успішне",
     "Eng": "Restoring password was successfull",
     "Rus": "Восстановления пароля прошло успешно"
+  },
+  "ChangePhoneNumberSms": {
+    "Ukr": "Підтвердження номеру  #token",
+    "Eng": "Confirming phone #token",
+    "Rus": "Подтверждения телефона #token"
+  },
+  "PhoneNumberConfirmedSms": {
+    "Ukr": "Підтвердження номеру було успішне",
+    "Eng": "Phone confirming was successfull",
+    "Rus": "Подтверждения номера прошло успешно"
   }
 }

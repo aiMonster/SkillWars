@@ -3,6 +3,7 @@ using Common.Enums;
 using Common.Interfaces.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel.DataAnnotations;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -93,6 +94,75 @@ namespace SkillWars.Controllers
                 return StatusCode(response.Error.ErrorCode, response.Error);
             }
 
+            return Ok(response.Data);
+        }
+
+        [HttpPut("Email")]
+        public async Task<IActionResult> ChangeEmail([FromBody]string email)
+        {
+            if (!new EmailAddressAttribute().IsValid(email))
+            {
+                return BadRequest(ModelState);
+            }
+
+            var response = await _accountService.ChangeEmail(email, Convert.ToInt32(User.Identity.Name));
+            if (response.Error != null)
+            {
+                return StatusCode(response.Error.ErrorCode, response.Error);
+            }
+
+            return Ok(response.Data);
+        }
+
+        [AllowAnonymous]
+        [HttpGet("ConfirmEmailChanging/{token}")]
+        public async Task<IActionResult> ChangeEmailConfirm([FromRoute]string token)
+        {
+            if (String.IsNullOrEmpty(token))
+            {
+                return BadRequest();
+            }
+
+            var response = await _accountService.ChangeEmailConfirm(token);
+            if (response.Error != null)
+            {
+                return StatusCode(response.Error.ErrorCode, response.Error);
+            }
+            return Ok(response.Data);
+        }
+
+        //Left to add validation for phone number
+        [HttpPut("PhoneNumber")]
+        public async Task<IActionResult> ChangePhoneNumber([FromBody]string phoneNumber)
+        {
+            //if (!new EmailAddressAttribute().IsValid(email))
+            //{
+            //    return BadRequest(ModelState);
+            //}
+
+            var response = await _accountService.ChangeOrAddPhone(phoneNumber, Convert.ToInt32(User.Identity.Name));
+            if (response.Error != null)
+            {
+                return StatusCode(response.Error.ErrorCode, response.Error);
+            }
+
+            return Ok(response.Data);
+        }
+
+        [AllowAnonymous]
+        [HttpGet("ConfirmPhoneChanging/{token}")]
+        public async Task<IActionResult> ChangePhoneNumberConfirm([FromRoute]string token)
+        {
+            if (String.IsNullOrEmpty(token))
+            {
+                return BadRequest();
+            }
+
+            var response = await _accountService.ChangeOrAddPhoneConfirm(token);
+            if (response.Error != null)
+            {
+                return StatusCode(response.Error.ErrorCode, response.Error);
+            }
             return Ok(response.Data);
         }
     }

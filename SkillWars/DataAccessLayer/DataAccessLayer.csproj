@@ -115,6 +115,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Context\SkillWarsContext.cs" />
+    <Compile Include="Migrations\20180319175959_additionalinfotoken.cs" />
+    <Compile Include="Migrations\20180319175959_additionalinfotoken.designer.cs">
+      <DependentUpon>20180319175959_additionalinfotoken.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\SkillWarsContextModelSnapshot.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
