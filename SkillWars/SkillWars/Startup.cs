@@ -25,6 +25,7 @@ using SkillWars.Extensions;
 using Swashbuckle.AspNetCore.Swagger;
 using Microsoft.IdentityModel.Tokens;
 using Services.AccountService;
+using Services.TimeredFunctionsService;
 
 namespace SkillWars
 {
@@ -74,11 +75,16 @@ namespace SkillWars
                     Type = "apiKey",
                 });
 
+
                 var basePath = PlatformServices.Default.Application.ApplicationBasePath;
                 var xmlPath = Path.Combine(basePath, "SkillWarsDoc.xml");
 
                 if (File.Exists(xmlPath))
                     options.IncludeXmlComments(xmlPath);
+                else
+                {
+                    File.Create(xmlPath);
+                }
             });            
 
             services.AddDbContext<SkillWarsContext>(options =>
@@ -88,6 +94,7 @@ namespace SkillWars
             services.AddSingleton(_ => Configuration);           
             services.AddSingleton<ILoginService, LoginService>();
             services.AddSingleton<IHtmlGeneratorService, HtmlGeneratorService>();
+            services.AddSingleton<ITimeredFunctionsService, TimeredFunctionsService>();
 
             //transient services
             services.AddTransient<IEmailService, EmailService>();
@@ -104,7 +111,7 @@ namespace SkillWars
             return services.BuildServiceProvider();
         }
                 
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, IApplicationLifetime lifetime, IConfigurationRoot configuration, IHtmlGeneratorService htmlGeneratorService)
+        public async void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, IApplicationLifetime lifetime, IConfigurationRoot configuration, IHtmlGeneratorService htmlGeneratorService, ITimeredFunctionsService timeredFunctionsService)
         {            
             SetUpLogger(env, loggerFactory, lifetime, configuration);
             app.UseExceptionHandlerMiddleware();
@@ -116,6 +123,7 @@ namespace SkillWars
             });
 
             htmlGeneratorService.SetPath(Path.Combine(env.ContentRootPath, "wwwroot/EmailHtmlForms"));
+            await timeredFunctionsService.Setup();
 
             app.UseCors(builder => builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
             app.UseMvc();

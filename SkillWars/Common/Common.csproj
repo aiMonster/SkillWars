@@ -66,6 +66,7 @@
     <Compile Include="Interfaces\Services\IHtmlGeneratorService.cs" />
     <Compile Include="Interfaces\Services\ILoginService.cs" />
     <Compile Include="Interfaces\Services\ISmsService.cs" />
+    <Compile Include="Interfaces\Services\ITimeredFunctionsService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup />

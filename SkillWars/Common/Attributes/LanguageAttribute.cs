@@ -14,7 +14,7 @@ namespace Common.Attributes
                 if (Enum.IsDefined(typeof(Languages), language))
                     return true;
                 else
-                    this.ErrorMessage = "Language is not valid";
+                    this.ErrorMessage = "Such language is not found";
             }
             return false;
         }

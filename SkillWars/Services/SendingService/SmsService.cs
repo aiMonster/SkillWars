@@ -17,11 +17,16 @@ namespace Services.SendingService
 
         public async Task SendSms(string phoneNumber, string message)
         {
-            _emailService.SendMail(phoneNumber, message, "It is Sms");
+            await SendSms(new List<string> { phoneNumber}, message);            
         }
+
         public async Task SendSms(List<string> phoneNumbers, string message)
         {
-
+            foreach(var phone in phoneNumbers)
+            {
+                await _emailService.SendMail(phone, message, "It is Sms");
+            }
+            
         }
     }
 }

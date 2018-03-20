@@ -1,12 +1,8 @@
-﻿using Common.DTO.Account;
-using Common.DTO.Login;
+﻿using Common.DTO.Login;
 using Common.Interfaces.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace SkillWars.Controllers
@@ -23,13 +19,12 @@ namespace SkillWars.Controllers
         }
 
         /// <summary>
-        /// Registration
+        /// Regiser new user
         /// </summary>
-        /// <remarks>
-        /// Here we can register new user
-        /// </remarks>
         /// <returns></returns>
         /// <response code="500">Internal error on server</response>
+        /// <response code="400">This email is already used</response>
+        /// <response code="400">This NickName is already used</response>
         /// <response code="400">Bad request</response>
         /// <response code="200">Success</response>
         [HttpPost("Register")]
@@ -50,15 +45,13 @@ namespace SkillWars.Controllers
         }
 
         /// <summary>
-        /// Registration by steam
-        /// </summary>
-        /// <remarks>
-        /// Here we can register new user by steam
-        /// </remarks>
+        /// Register new user with steam
         /// <returns></returns>
         /// <response code="500">Internal error on server</response>
-        /// <response code="400">Bad request</response>
+        /// <response code="409">Your account email is already confirmed</response>
         /// <response code="404">User wiht such id is not found</response>
+        /// <response code="400">This email is already used</response>   
+        /// <response code="400">Bad request</response>
         /// <response code="200">Success</response>
         [HttpPost("SteamRegister")]
         public async Task<IActionResult> SteamRegister([FromBody]SteamRegistrationDTO request)
@@ -79,13 +72,12 @@ namespace SkillWars.Controllers
         /// <summary>
         /// Confirming email
         /// </summary>
-        /// <remarks>
-        /// Here we can confirm email by token that was sent on email
-        /// </remarks>
         /// <returns></returns>
         /// <response code="500">Internal error on server</response>
+        /// <response code="404">User not found</response>
+        /// <response code="400">Token is not valid</response>
+        /// <response code="400">Confirmation date is over</response> 
         /// <response code="400">Bad request</response>
-        /// <response code="403">Email is already confirmed</response>
         /// <response code="200">Success</response>
         [HttpGet("ConfirmEmail/{token}")]
         public async Task<IActionResult> ConfirmEmail([FromRoute]string token)
@@ -104,16 +96,14 @@ namespace SkillWars.Controllers
         }
 
         /// <summary>
-        /// Getting token
+        /// Get token by login and password
         /// </summary>
-        /// <remarks>
-        /// Here we can get token to get access for authorithed methods
-        /// </remarks>
         /// <returns></returns>
-        /// <response code="500">Internal error on server</response>
-        /// <response code="400">Bad request</response>
-        /// <response code="404">Iinvalid username or password</response>
+        /// <response code="500">Internal error on server</response>  
+        /// <response code="404">Iinvalid username</response>
         /// <response code="403">Email is not confirmed</response>
+        /// <response code="400">Invalid password</response>
+        /// <response code="400">Bad request</response>
         /// <response code="200">Success</response>
         [HttpPost("Token")]
         public async Task<IActionResult> Token([FromBody]LoginRequest request)
@@ -134,17 +124,15 @@ namespace SkillWars.Controllers
         }
 
         /// <summary>
-        /// Getting token by steam id
+        /// Get token by steamId
         /// </summary>
-        /// <remarks>
-        /// Here we can get token to get access for authorithed methods by steam id
-        /// </remarks>
         /// <returns></returns>
-        /// <response code="500">Internal error on server</response>
-        /// <response code="400">Bad request</response>
+        /// <response code="500">Internal error on server</response>       
         /// <response code="404">User with such id not found on steam</response>
-        /// <response code="403">Email is not confirmed or not set</response>
-        /// <response code="200">Left to register email</response>
+        /// <response code="403">Email is not set</response>
+        /// <response code="403">Email is not confirmed</response>
+        /// <response code="400">Bad request</response>
+        /// <response code="202">Left to register email</response>
         /// <response code="200">Success</response>
         [HttpPost("Token/{steamId}")]
         public async Task<IActionResult> TokenBySteam([FromRoute]string steamId)
@@ -164,14 +152,12 @@ namespace SkillWars.Controllers
         }
 
         /// <summary>
-        /// Restoring password by email
+        /// Restore password by email
         /// </summary>
-        /// <remarks>
-        /// Here we can restore password by email if user forgot it
-        /// </remarks>
         /// <returns></returns>
         /// <response code="500">Internal error on server</response>
         /// <response code="404">User with such email is not found</response>
+        /// <response code="403">Email is not confirmed</response>
         /// <response code="400">Bad request</response>
         /// <response code="200">Success</response>
         [HttpPut("RestorePasswordByEmail")]
@@ -191,14 +177,13 @@ namespace SkillWars.Controllers
         }
 
         /// <summary>
-        /// Restoring password by email confirmation
+        /// Confirm restoring password by email
         /// </summary>
-        /// <remarks>
-        /// Here we can restore password by got on email token
-        /// </remarks>
         /// <returns></returns>
         /// <response code="500">Internal error on server</response>
-        /// <response code="404">User or token is not found</response>
+        /// <response code="404">Token is not found</response>
+        /// <response code="404">User not found or email is not confirmed</response>
+        /// <response code="400">Confirmation date is over</response>
         /// <response code="400">Bad request</response>
         /// <response code="200">Success</response>
         [HttpPut("RestorePasswordByEmailConfirm")]
@@ -217,15 +202,14 @@ namespace SkillWars.Controllers
             return Ok(response.Data);
         }
 
+        //Add Phone number validation
         /// <summary>
-        /// Restoring password by phone number
+        /// Confirm restoring password by phone number
         /// </summary>
-        /// <remarks>
-        /// Here we can restore password by sms if user forgot it
-        /// </remarks>
         /// <returns></returns>
         /// <response code="500">Internal error on server</response>
         /// <response code="404">User with such phone number is not found</response>
+        /// <response code="403">Phone number is not confirmed</response>
         /// <response code="400">Bad request</response>
         /// <response code="200">Success</response>
         [HttpPut("RestorePasswordByPhone")]
@@ -247,12 +231,11 @@ namespace SkillWars.Controllers
         /// <summary>
         /// Restoring password by phone confirmation
         /// </summary>
-        /// <remarks>
-        /// Here we can restore password by got on phone code
-        /// </remarks>
         /// <returns></returns>
         /// <response code="500">Internal error on server</response>
-        /// <response code="404">User or token is not found</response>
+        /// <response code="404">Token is not found</response>
+        /// <response code="404">User not found or phone number is not confirmed</response>
+        /// <response code="400">Confirmation date is over</response>
         /// <response code="400">Bad request</response>
         /// <response code="200">Success</response>
         [HttpPut("RestorePasswordByPhoneConfirm")]
@@ -270,6 +253,5 @@ namespace SkillWars.Controllers
             }
             return Ok(response.Data);
         }
-
     }
 }

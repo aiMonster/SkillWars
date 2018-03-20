@@ -23,22 +23,23 @@ using System.Threading.Tasks;
 namespace Services.LoginService
 {
     public class LoginService : ILoginService
-    {
-        private readonly SkillWarsContext _context;
+    {        
+        private readonly IHtmlGeneratorService _htmlGeneratorService;
         private readonly IConfigurationRoot _configuration;
         private readonly IEmailService _emailService;
+        private readonly SkillWarsContext _context;
         private readonly ISmsService _smsService;
         private readonly ILogger _logger;
-        private readonly IHtmlGeneratorService _htmlGeneratorService;
+        
 
         public LoginService(SkillWarsContext context, IConfigurationRoot configurtation, IEmailService emailService, ILoggerFactory loggerFactory, IHtmlGeneratorService htmlGeneratorService, ISmsService smsService)
         {
-            _context = context;
+            _logger = loggerFactory.CreateLogger<LoginService>();
+            _htmlGeneratorService = htmlGeneratorService;            
             _configuration = configurtation;
             _emailService = emailService;
             _smsService = smsService;
-            _logger = loggerFactory.CreateLogger<LoginService>();
-            _htmlGeneratorService = htmlGeneratorService;
+            _context = context;
         }
 
         public async Task<Response<string>> Register (RegistrationDTO request)
@@ -74,7 +75,7 @@ namespace Services.LoginService
             });
             await _context.SaveChangesAsync();
 
-            _logger.LogDebug($"User registered, left send confirmation email: {request.Email}");
+            _logger.LogDebug($"User registered, sending confirmation email: {request.Email}");
             try
             {
                 var apiPath = _configuration["FrontLinks:ConfirmEmail"] + confirmationToken;
@@ -84,20 +85,21 @@ namespace Services.LoginService
             }
             catch(Exception ex)
             {
-                _logger.LogError("Couldn't send confirmaiton regisratigon email for " + user.Email + "\nException:\n" + ex.Message);
+                _logger.LogError("Couldn't send regisratigon confirmaiton email for " + user.Email + "\nException:\n" + ex.Message);
                 response.Error = new Error(500, "Couldn't send, write for developers - " + ex.Message);
                 return response;
             }
-            _logger.LogDebug($"Confirmation email successfully sended: {request.Email}");
+            _logger.LogDebug($"Registration confirmation email successfully sended: {request.Email}");
             return response;
         }
 
         public async Task<Response<string>> SteamRegister(SteamRegistrationDTO request)
         {
+            _logger.LogDebug($"Registering new user by steam: {request.Email}/{request.SteamId}");
             var response = new Response<string>();
             if (await _context.Users.AnyAsync(p => p.Email == request.Email))
             {
-
+                _logger.LogDebug($"User with such email already exists: {request.Email}");
                 response.Error = new Error(400, "This email is already used, go to account page and add steam to your account");
                 return response;
             }
@@ -105,13 +107,14 @@ namespace Services.LoginService
             var user = await _context.Users.FirstOrDefaultAsync(p => p.SteamId == request.SteamId);
             if(user == null)
             {
+                _logger.LogDebug($"User with such steamId doesn't exists: {request.SteamId}");
                 response.Error = new Error(404, "User with such steamId is not found");
                 return response;
             }
 
             if (user.IsEmailConfirmed)
             {
-                response.Error = new Error(400, "Your email is already confirmed");
+                response.Error = new Error(409, "Your account email is already confirmed - " + user.Email);
                 return response;
             }
 
@@ -129,7 +132,7 @@ namespace Services.LoginService
             });
             await _context.SaveChangesAsync();
 
-            _logger.LogDebug($"User registered by steam, left send confirmation email: {request.Email}");
+            _logger.LogDebug($"User registered by steam,sending confirmation email: {request.Email}");
             try
             {
                 var apiPath = _configuration["FrontLinks:ConfirmEmail"] + confirmationToken;
@@ -139,11 +142,11 @@ namespace Services.LoginService
             }
             catch (Exception ex)
             {
-                _logger.LogError("Couldn't send confirmaiton regisratigon email by steam for " + user.Email + "\nException:\n" + ex.Message);
+                _logger.LogError("Couldn't send registration confirmaiton email by steam for " + user.Email + "\nException:\n" + ex.Message);
                 response.Error = new Error(500, "Couldn't send, write for developers");
                 return response;
             }
-            _logger.LogDebug($"Confirmation email successfully sended by steam to : {request.Email}");
+            _logger.LogDebug($"Registation by steam confirmation email successfully sended to : {request.Email}");
             return response;
         }
 
@@ -156,12 +159,14 @@ namespace Services.LoginService
 
             if (token == null)
             {
+                _logger.LogDebug("Token was not found");
                 response.Error = new Error(400, "Token is not valid");
                 return response;
             }
 
             if (token.User == null)
             {
+                _logger.LogDebug("User was not found already");
                 response.Error = new Error(404, "User not found");
                 return response;
             }
@@ -169,6 +174,7 @@ namespace Services.LoginService
             if (token.ExpirationDate < DateTime.UtcNow)
             {
                 _context.Tokens.Remove(token);
+                _logger.LogDebug("Confirmation date is over");
                 response.Error = new Error(400, "Confirmation date is over");
                 return response;
             }
@@ -178,7 +184,7 @@ namespace Services.LoginService
             await _context.SaveChangesAsync();
             response.Data = new UserProfile(token.User);
 
-            _logger.LogDebug($"User confirmed email: {token.User.Email}");
+            _logger.LogDebug($"User confirmed email, sending response: {token.User.Email}");
             try
             {               
                 var content = await _htmlGeneratorService.EmailConfirmed(token.User.Language);
@@ -187,10 +193,10 @@ namespace Services.LoginService
             }
             catch (Exception ex)
             {
-                _logger.LogError("Couldn't send that email confirmed for " + token.User.Email + "\nException:\n" + ex.Message);
+                _logger.LogError("Couldn't notify that email confirmed for " + token.User.Email + "\nException:\n" + ex.Message);
                 return response;
             }
-            _logger.LogDebug($"Email confirmed successfully sended: {token.User.Email}");
+            _logger.LogDebug($"Email confirmed successfully notified: {token.User.Email}");
            
             return response;
         }
@@ -200,14 +206,22 @@ namespace Services.LoginService
             _logger.LogDebug("Getting identity by login and password");
             var response = new Response<ClaimsIdentity>();
 
-            var user = await _context.Users.AsNoTracking().FirstOrDefaultAsync(p => p.Email == login && p.Password == SkillWarsEncoder.Encript(password));
+            var user = await _context.Users.AsNoTracking().FirstOrDefaultAsync(p => p.Email == login);
             if (user == null)
             {
-                response.Error = new Error(404, "Invalid username or password");
+                _logger.LogDebug("Invalid username");
+                response.Error = new Error(404, "Invalid username");
+                return response;
+            }
+            if(user.Password == SkillWarsEncoder.Encript(password))
+            {
+                _logger.LogDebug("Invalid Password");
+                response.Error = new Error(400, "Invalid Password");
                 return response;
             }
             if (!user.IsEmailConfirmed)
             {
+                _logger.LogDebug("Email is not confirmed");
                 response.Error = new Error(403, "Email is not confirmed");
                 return response;
             }
@@ -223,7 +237,6 @@ namespace Services.LoginService
 
             response.Data = claimsIdentity;
             return response;
-
         }
 
         public async Task<Response<ClaimsIdentity>> GetIdentity(string steamId)
@@ -240,7 +253,7 @@ namespace Services.LoginService
                 if (resp.StatusCode != System.Net.HttpStatusCode.OK)
                 {
                     _logger.LogError("ApiKey for steam is broken");
-                    response.Error = new Error(500, "Server is brocken, we need to update api key");
+                    response.Error = new Error(500, "Server is brocken, we need to update api key, write to developers");
                     return response;
                 }
 
@@ -295,7 +308,7 @@ namespace Services.LoginService
 
         public async Task<TokenResponse> GetToken(ClaimsIdentity identity)
         {
-            _logger.LogDebug("Getting token");
+            _logger.LogDebug("Getting token by identity");
             var response = new Response<TokenResponse>();
 
             var now = DateTime.UtcNow;
@@ -328,12 +341,14 @@ namespace Services.LoginService
             var user = await _context.Users.FirstOrDefaultAsync(p => p.Email == email);
             if (user == null)
             {
+                _logger.LogDebug("User was not found");
                 response.Error = new Error(404, "User not found");
                 return response;
             }
             if(!user.IsEmailConfirmed)
             {
-                response.Error = new Error(400, "Email is not confirmed");
+                _logger.LogDebug("Email is not confirmed yet");
+                response.Error = new Error(403, "Email is not confirmed");
                 return response;
             }
             response.Data = email;
@@ -376,6 +391,7 @@ namespace Services.LoginService
 
             if (token == null)
             {
+                _logger.LogDebug("Token is not valid");
                 response.Error = new Error(404, "Token is not valid");
                 return response;
             }
@@ -394,7 +410,7 @@ namespace Services.LoginService
             }
             response.Data = token.User.Email;
 
-            token.User.Password =SkillWarsEncoder.Encript(request.Password);
+            token.User.Password = SkillWarsEncoder.Encript(request.Password);
             _context.Tokens.Remove(token);
             await _context.SaveChangesAsync();
 
@@ -424,12 +440,13 @@ namespace Services.LoginService
             var user = await _context.Users.FirstOrDefaultAsync(p => p.PhoneNumber == phoneNumber);
             if (user == null)
             {
+                _logger.LogDebug("User not found");
                 response.Error = new Error(404, "User not found");
                 return response;
             }
             if(!user.IsPhoneNumberConfirmed)
             {
-                response.Error = new Error(400, "Phone number is not confirmed");
+                response.Error = new Error(403, "Phone number is not confirmed");
                 return response;
             }
 
@@ -468,7 +485,7 @@ namespace Services.LoginService
                 response.Error = new Error(500, "Couldn't send, write for developers");
                 return response;
             }
-            _logger.LogDebug($"Restoring password by phone successfully sended: {user.Email}");
+            _logger.LogDebug($"Restoring password by phone successfully sended: {user.PhoneNumber}");
 
             return response;
         }
@@ -483,6 +500,7 @@ namespace Services.LoginService
 
             if (token == null)
             {
+                _logger.LogDebug("Token is not valid");
                 response.Error = new Error(404, "Token is not valid");
                 return response;
             }
@@ -507,9 +525,9 @@ namespace Services.LoginService
 
             _logger.LogDebug($"User restored password: {token.User.PhoneNumber}");
             try
-            {
+            {                
+                var content = _configuration.GetSection("PasswordRestoredSms")[token.User.Language.ToString()];
                 ////==== Change email to phone number
-                var content = _configuration.GetSection("PasswordRestoredSms")[token.User.Language.ToString()];               
                 await _smsService.SendSms(token.User.Email, content);
             }
             catch (Exception ex)
@@ -517,7 +535,7 @@ namespace Services.LoginService
                 _logger.LogError("Couldn't send that password restored for " + token.User.PhoneNumber + "\nException:\n" + ex.Message);
                 return response;
             }
-            _logger.LogDebug($"Password restored successfully sended: {token.User.Email}");
+            _logger.LogDebug($"Password restored successfully sended: {token.User.PhoneNumber}");
 
             return response;
         }

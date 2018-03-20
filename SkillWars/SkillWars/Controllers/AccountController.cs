@@ -23,12 +23,26 @@ namespace SkillWars.Controllers
             _accountService = accountService;
         }
 
+        /// <summary>
+        /// Get user profile
+        /// </summary>
+        /// <returns></returns>
+        /// <response code="500">Internal error on server</response>        
+        /// <response code="200">Success</response>
         [HttpGet("UserProfile")]
         public async Task<IActionResult> UserProfile()
         {
             return Ok(await _accountService.GetUserProfile(Convert.ToInt32(User.Identity.Name)));
         }
 
+        /// <summary>
+        /// Change NickName
+        /// </summary>
+        /// <returns></returns>
+        /// <response code="500">Internal error on server</response>
+        /// <response code="400">Bad request</response>
+        /// <response code="400">This NickName is already used</response>
+        /// <response code="200">Success</response>
         [HttpPut("NickName")]
         public async Task<IActionResult> ChangeNickName([FromBody]string nickName)
         {
@@ -46,6 +60,13 @@ namespace SkillWars.Controllers
             return Ok(response.Data);
         }
 
+        /// <summary>
+        /// Change language
+        /// </summary>
+        /// <returns></returns>
+        /// <response code="500">Internal error on server</response>     
+        /// <response code="400">Bad request</response>
+        /// <response code="200">Success</response>
         [HttpPut("Language")]
         public async Task<IActionResult> ChangeLanguage([FromBody]Languages language)
         {
@@ -63,6 +84,15 @@ namespace SkillWars.Controllers
             return Ok(response.Data);
         }
 
+        /// <summary>
+        /// Change steamId
+        /// </summary>
+        /// <returns></returns>
+        /// <response code="500">Internal error on server</response>
+        /// <response code="404">User with such id is not found on the Steam</response>
+        /// <response code="403">This steam id is already connected to any account</response>
+        /// <response code="400">Bad request</response>
+        /// <response code="200">Success</response>
         [HttpPost("Steam")]
         public async Task<IActionResult> ChangeSteam([FromBody]string steamId)
         {
@@ -80,6 +110,14 @@ namespace SkillWars.Controllers
             return Ok(response.Data);
         }
 
+        /// <summary>
+        /// Change password
+        /// </summary>
+        /// <returns></returns>
+        /// <response code="500">Internal error on server</response>
+        /// <response code="403">Old password is not valid</response>
+        /// <response code="400">Bad request</response>
+        /// <response code="200">Success</response>
         [HttpPost("Password")]
         public async Task<IActionResult> ChangePassword([FromBody]ChangePasswordRequest request)
         {
@@ -97,6 +135,14 @@ namespace SkillWars.Controllers
             return Ok(response.Data);
         }
 
+        /// <summary>
+        /// Change email
+        /// </summary>
+        /// <returns></returns>
+        /// <response code="500">Internal error on server</response>
+        /// <response code="400">This email is already used</response>
+        /// <response code="400">Bad request</response>
+        /// <response code="200">Success</response>
         [HttpPut("Email")]
         public async Task<IActionResult> ChangeEmail([FromBody]string email)
         {
@@ -114,6 +160,17 @@ namespace SkillWars.Controllers
             return Ok(response.Data);
         }
 
+        /// <summary>
+        /// Confirm changing email
+        /// </summary>
+        /// <returns></returns>
+        /// <response code="500">Internal error on server</response>
+        /// <response code="404">User not found</response>
+        /// <response code="400">Token is not valid</response>
+        /// <response code="400">Confirmation date is over</response>
+        /// <response code="400">This email is already used</response>
+        /// <response code="400">Bad request</response>
+        /// <response code="200">Success</response>
         [AllowAnonymous]
         [HttpGet("ConfirmEmailChanging/{token}")]
         public async Task<IActionResult> ChangeEmailConfirm([FromRoute]string token)
@@ -131,7 +188,16 @@ namespace SkillWars.Controllers
             return Ok(response.Data);
         }
 
+
         //Left to add validation for phone number
+        /// <summary>
+        /// Change or add phone number
+        /// </summary>
+        /// <returns></returns>
+        /// <response code="500">Internal error on server</response>
+        /// <response code="400">This phone number is already used</response>
+        /// <response code="400">Bad request</response>
+        /// <response code="200">Success</response>
         [HttpPut("PhoneNumber")]
         public async Task<IActionResult> ChangePhoneNumber([FromBody]string phoneNumber)
         {
@@ -149,6 +215,17 @@ namespace SkillWars.Controllers
             return Ok(response.Data);
         }
 
+        /// <summary>
+        /// Confirm changing or adding phone number
+        /// </summary>
+        /// <returns></returns>
+        /// <response code="500">Internal error on server</response>
+        /// <response code="404">User not found</response>
+        /// <response code="400">Token is not valid</response>
+        /// <response code="400">Confirmation date is over</response>
+        /// <response code="400">This phone number is already used</response>
+        /// <response code="400">Bad request</response>
+        /// <response code="200">Success</response>
         [AllowAnonymous]
         [HttpGet("ConfirmPhoneChanging/{token}")]
         public async Task<IActionResult> ChangePhoneNumberConfirm([FromRoute]string token)

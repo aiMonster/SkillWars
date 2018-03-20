@@ -4,109 +4,180 @@
         <name>SkillWars</name>
     </assembly>
     <members>
+        <member name="M:SkillWars.Controllers.AccountController.UserProfile">
+            <summary>
+            Get user profile
+            </summary>
+            <returns></returns>
+            <response code="500">Internal error on server</response>        
+            <response code="200">Success</response>
+        </member>
+        <member name="M:SkillWars.Controllers.AccountController.ChangeNickName(System.String)">
+            <summary>
+            Change NickName
+            </summary>
+            <returns></returns>
+            <response code="500">Internal error on server</response>
+            <response code="400">Bad request</response>
+            <response code="400">This NickName is already used</response>
+            <response code="200">Success</response>
+        </member>
+        <member name="M:SkillWars.Controllers.AccountController.ChangeLanguage(Common.Enums.Languages)">
+            <summary>
+            Change language
+            </summary>
+            <returns></returns>
+            <response code="500">Internal error on server</response>     
+            <response code="400">Bad request</response>
+            <response code="200">Success</response>
+        </member>
+        <member name="M:SkillWars.Controllers.AccountController.ChangeSteam(System.String)">
+            <summary>
+            Change steamId
+            </summary>
+            <returns></returns>
+            <response code="500">Internal error on server</response>
+            <response code="404">User with such id is not found on the Steam</response>
+            <response code="403">This steam id is already connected to any account</response>
+            <response code="400">Bad request</response>
+            <response code="200">Success</response>
+        </member>
+        <member name="M:SkillWars.Controllers.AccountController.ChangePassword(Common.DTO.Account.ChangePasswordRequest)">
+            <summary>
+            Change password
+            </summary>
+            <returns></returns>
+            <response code="500">Internal error on server</response>
+            <response code="403">Old password is not valid</response>
+            <response code="400">Bad request</response>
+            <response code="200">Success</response>
+        </member>
+        <member name="M:SkillWars.Controllers.AccountController.ChangeEmail(System.String)">
+            <summary>
+            Change email
+            </summary>
+            <returns></returns>
+            <response code="500">Internal error on server</response>
+            <response code="400">This email is already used</response>
+            <response code="400">Bad request</response>
+            <response code="200">Success</response>
+        </member>
+        <member name="M:SkillWars.Controllers.AccountController.ChangeEmailConfirm(System.String)">
+            <summary>
+            Confirm changing email
+            </summary>
+            <returns></returns>
+            <response code="500">Internal error on server</response>
+            <response code="404">User not found</response>
+            <response code="400">Token is not valid</response>
+            <response code="400">Confirmation date is over</response>
+            <response code="400">This email is already used</response>
+            <response code="400">Bad request</response>
+            <response code="200">Success</response>
+        </member>
+        <member name="M:SkillWars.Controllers.AccountController.ChangePhoneNumber(System.String)">
+            <summary>
+            Change or add phone number
+            </summary>
+            <returns></returns>
+            <response code="500">Internal error on server</response>
+            <response code="400">This phone number is already used</response>
+            <response code="400">Bad request</response>
+            <response code="200">Success</response>
+        </member>
+        <member name="M:SkillWars.Controllers.AccountController.ChangePhoneNumberConfirm(System.String)">
+            <summary>
+            Confirm changing or adding phone number
+            </summary>
+            <returns></returns>
+            <response code="500">Internal error on server</response>
+            <response code="404">User not found</response>
+            <response code="400">Token is not valid</response>
+            <response code="400">Confirmation date is over</response>
+            <response code="400">This phone number is already used</response>
+            <response code="400">Bad request</response>
+            <response code="200">Success</response>
+        </member>
         <member name="M:SkillWars.Controllers.LoginController.Register(Common.DTO.Login.RegistrationDTO)">
             <summary>
-            Registration
+            Regiser new user
             </summary>
-            <remarks>
-            Here we can register new user
-            </remarks>
             <returns></returns>
             <response code="500">Internal error on server</response>
+            <response code="400">This email is already used</response>
+            <response code="400">This NickName is already used</response>
             <response code="400">Bad request</response>
             <response code="200">Success</response>
         </member>
-        <member name="M:SkillWars.Controllers.LoginController.SteamRegister(Common.DTO.Login.SteamRegistrationDTO)">
-            <summary>
-            Registration by steam
-            </summary>
-            <remarks>
-            Here we can register new user by steam
-            </remarks>
-            <returns></returns>
-            <response code="500">Internal error on server</response>
-            <response code="400">Bad request</response>
-            <response code="404">User wiht such id is not found</response>
-            <response code="200">Success</response>
-        </member>
+        <!-- Badly formed XML comment ignored for member "M:SkillWars.Controllers.LoginController.SteamRegister(Common.DTO.Login.SteamRegistrationDTO)" -->
         <member name="M:SkillWars.Controllers.LoginController.ConfirmEmail(System.String)">
             <summary>
             Confirming email
             </summary>
-            <remarks>
-            Here we can confirm email by token that was sent on email
-            </remarks>
             <returns></returns>
             <response code="500">Internal error on server</response>
+            <response code="404">User not found</response>
+            <response code="400">Token is not valid</response>
+            <response code="400">Confirmation date is over</response> 
             <response code="400">Bad request</response>
-            <response code="403">Email is already confirmed</response>
             <response code="200">Success</response>
         </member>
         <member name="M:SkillWars.Controllers.LoginController.Token(Common.DTO.Login.LoginRequest)">
             <summary>
-            Getting token
+            Get token by login and password
             </summary>
-            <remarks>
-            Here we can get token to get access for authorithed methods
-            </remarks>
             <returns></returns>
-            <response code="500">Internal error on server</response>
-            <response code="400">Bad request</response>
-            <response code="404">Iinvalid username or password</response>
+            <response code="500">Internal error on server</response>  
+            <response code="404">Iinvalid username</response>
             <response code="403">Email is not confirmed</response>
+            <response code="400">Invalid password</response>
+            <response code="400">Bad request</response>
             <response code="200">Success</response>
         </member>
         <member name="M:SkillWars.Controllers.LoginController.TokenBySteam(System.String)">
             <summary>
-            Getting token by steam id
+            Get token by steamId
             </summary>
-            <remarks>
-            Here we can get token to get access for authorithed methods by steam id
-            </remarks>
             <returns></returns>
-            <response code="500">Internal error on server</response>
-            <response code="400">Bad request</response>
+            <response code="500">Internal error on server</response>       
             <response code="404">User with such id not found on steam</response>
-            <response code="403">Email is not confirmed or not set</response>
-            <response code="200">Left to register email</response>
+            <response code="403">Email is not set</response>
+            <response code="403">Email is not confirmed</response>
+            <response code="400">Bad request</response>
+            <response code="202">Left to register email</response>
             <response code="200">Success</response>
         </member>
         <member name="M:SkillWars.Controllers.LoginController.RestorePasswordByEmail(System.String)">
             <summary>
-            Restoring password by email
+            Restore password by email
             </summary>
-            <remarks>
-            Here we can restore password by email if user forgot it
-            </remarks>
             <returns></returns>
             <response code="500">Internal error on server</response>
             <response code="404">User with such email is not found</response>
+            <response code="403">Email is not confirmed</response>
             <response code="400">Bad request</response>
             <response code="200">Success</response>
         </member>
         <member name="M:SkillWars.Controllers.LoginController.RestorePasswordByEmailConfirm(Common.DTO.Login.RestorePasswordRequest)">
             <summary>
-            Restoring password by email confirmation
+            Confirm restoring password by email
             </summary>
-            <remarks>
-            Here we can restore password by got on email token
-            </remarks>
             <returns></returns>
             <response code="500">Internal error on server</response>
-            <response code="404">User or token is not found</response>
+            <response code="404">Token is not found</response>
+            <response code="404">User not found or email is not confirmed</response>
+            <response code="400">Confirmation date is over</response>
             <response code="400">Bad request</response>
             <response code="200">Success</response>
         </member>
         <member name="M:SkillWars.Controllers.LoginController.RestorePasswordByPhone(System.String)">
             <summary>
-            Restoring password by phone number
+            Confirm restoring password by phone number
             </summary>
-            <remarks>
-            Here we can restore password by sms if user forgot it
-            </remarks>
             <returns></returns>
             <response code="500">Internal error on server</response>
             <response code="404">User with such phone number is not found</response>
+            <response code="403">Phone number is not confirmed</response>
             <response code="400">Bad request</response>
             <response code="200">Success</response>
         </member>
@@ -114,12 +185,11 @@
             <summary>
             Restoring password by phone confirmation
             </summary>
-            <remarks>
-            Here we can restore password by got on phone code
-            </remarks>
             <returns></returns>
             <response code="500">Internal error on server</response>
-            <response code="404">User or token is not found</response>
+            <response code="404">Token is not found</response>
+            <response code="404">User not found or phone number is not confirmed</response>
+            <response code="400">Confirmation date is over</response>
             <response code="400">Bad request</response>
             <response code="200">Success</response>
         </member>

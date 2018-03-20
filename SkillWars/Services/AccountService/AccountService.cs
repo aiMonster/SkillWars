@@ -11,10 +11,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Services.AccountService
@@ -38,10 +36,7 @@ namespace Services.AccountService
             _htmlGeneratorService = htmlGeneratorService;
         }
 
-        public async Task<UserProfile> GetUserProfile(int userId)
-        {           
-            return new UserProfile(await _context.Users.FirstOrDefaultAsync(u => u.Id == userId));
-        }
+        public async Task<UserProfile> GetUserProfile(int userId) => new UserProfile(await _context.Users.FirstOrDefaultAsync(u => u.Id == userId));       
 
         public async Task<Response<bool>> ChangeNickName(string nickName, int userId)
         {
@@ -108,9 +103,8 @@ namespace Services.AccountService
                     response.Error = new Error(500, "Server is brocken, we need to update api key");
                     return response;
                 }
-
-                var players = JsonConvert.DeserializeObject<SteamPlayerSummaryRootObject>(await resp.Content.ReadAsStringAsync()).Response.Players;
-                if (players.Count == 0)
+               
+                if (JsonConvert.DeserializeObject<SteamPlayerSummaryRootObject>(await resp.Content.ReadAsStringAsync()).Response.Players.Count == 0)
                 {
                     _logger.LogError("We have got user with steam id, and couldn't find him while adding in profile - " + steamId);
                     response.Error = new Error(404, "User with such id is not found on the Steam");
@@ -354,7 +348,7 @@ namespace Services.AccountService
                 return response;
             }
 
-            token.User.Email = token.AdditionalInfo;
+            token.User.PhoneNumber = token.AdditionalInfo;
             token.User.IsPhoneNumberConfirmed = true;
             _context.Tokens.Remove(token);
             await _context.SaveChangesAsync();

@@ -12,9 +12,10 @@ using System;
 namespace DataAccessLayer.Migrations
 {
     [DbContext(typeof(SkillWarsContext))]
-    partial class SkillWarsContextModelSnapshot : ModelSnapshot
+    [Migration("20180320165013_AuthRegisterMigration")]
+    partial class AuthRegisterMigration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

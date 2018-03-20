@@ -115,9 +115,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Context\SkillWarsContext.cs" />
-    <Compile Include="Migrations\20180319175959_additionalinfotoken.cs" />
-    <Compile Include="Migrations\20180319175959_additionalinfotoken.designer.cs">
-      <DependentUpon>20180319175959_additionalinfotoken.cs</DependentUpon>
+    <Compile Include="Migrations\20180320165013_AuthRegisterMigration.cs" />
+    <Compile Include="Migrations\20180320165013_AuthRegisterMigration.designer.cs">
+      <DependentUpon>20180320165013_AuthRegisterMigration.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\SkillWarsContextModelSnapshot.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
