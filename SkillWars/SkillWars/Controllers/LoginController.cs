@@ -46,6 +46,7 @@ namespace SkillWars.Controllers
 
         /// <summary>
         /// Register new user with steam
+        /// </summary>
         /// <returns></returns>
         /// <response code="500">Internal error on server</response>
         /// <response code="409">Your account email is already confirmed</response>

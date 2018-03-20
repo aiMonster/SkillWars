@@ -75,16 +75,13 @@ namespace SkillWars
                     Type = "apiKey",
                 });
 
+                //var basePath = PlatformServices.Default.Application.ApplicationBasePath;
+                //var xmlPath = Path.Combine(basePath, "SkillWarsDoc.xml");
+                ////var path = String.Format(@"{0}\SkillWarsDoc.xml", AppDomain.CurrentDomain.BaseDirectory);
+                //if (File.Exists(xmlPath))
+                //    options.IncludeXmlComments(xmlPath);
+                
 
-                var basePath = PlatformServices.Default.Application.ApplicationBasePath;
-                var xmlPath = Path.Combine(basePath, "SkillWarsDoc.xml");
-
-                if (File.Exists(xmlPath))
-                    options.IncludeXmlComments(xmlPath);
-                else
-                {
-                    File.Create(xmlPath);
-                }
             });            
 
             services.AddDbContext<SkillWarsContext>(options =>
