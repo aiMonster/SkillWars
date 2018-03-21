@@ -80,7 +80,7 @@ namespace SkillWars
                 ////var path = String.Format(@"{0}\SkillWarsDoc.xml", AppDomain.CurrentDomain.BaseDirectory);
                 //if (File.Exists(xmlPath))
                 //    options.IncludeXmlComments(xmlPath);
-                
+
 
             });            
 
@@ -100,10 +100,11 @@ namespace SkillWars
 
 
             services.AddCors();
-            services.AddMvc(options =>
-            {
-                options.Filters.Add(new RequireHttpsAttribute());
-            });
+            services.AddMvc();
+            //services.AddMvc(options =>
+            //{
+            //    options.Filters.Add(new RequireHttpsAttribute());
+            //});
 
             return services.BuildServiceProvider();
         }
@@ -143,7 +144,7 @@ namespace SkillWars
             {
                 logger = new LoggerConfiguration()
                     .WriteTo.Logger(l => l.Filter.ByIncludingOnly(e => e.Level == LogEventLevel.Information)
-                        .WriteTo.RollingFile(@"Logs\Info-{Date}.log"))
+                        .WriteTo.RollingFile(@"Logs\Info-{Date}.log"))                        
                     .WriteTo.Logger(l => l.Filter.ByIncludingOnly(e => e.Level == LogEventLevel.Debug)
                         .WriteTo.RollingFile(@"Logs\Debug-{Date}.log"))
                     .WriteTo.Logger(l => l.Filter.ByIncludingOnly(e => e.Level == LogEventLevel.Warning)
