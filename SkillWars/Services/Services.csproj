@@ -124,15 +124,14 @@
     <Compile Include="AccountService\AccountService.cs" />
     <Compile Include="LoginService\AuthOptions.cs" />
     <Compile Include="LoginService\LoginService.cs" />
+    <Compile Include="PaymentService\PaymentService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SendingService\EmailService.cs" />
     <Compile Include="SendingService\HtmlGeneratorService.cs" />
     <Compile Include="SendingService\SmsService.cs" />
     <Compile Include="TimeredFunctionsService\TimeredFunctionsService.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="PaymentService\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <ProjectReference Include="..\Common\Common.csproj">
       <Project>{58BD8BFB-784D-4392-A525-10AC44F14BEF}</Project>

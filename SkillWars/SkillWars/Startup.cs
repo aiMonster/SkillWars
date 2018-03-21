@@ -26,6 +26,7 @@ using Swashbuckle.AspNetCore.Swagger;
 using Microsoft.IdentityModel.Tokens;
 using Services.AccountService;
 using Services.TimeredFunctionsService;
+using Services.PaymentService;
 
 namespace SkillWars
 {
@@ -92,6 +93,7 @@ namespace SkillWars
             services.AddSingleton<ILoginService, LoginService>();
             services.AddSingleton<IHtmlGeneratorService, HtmlGeneratorService>();
             services.AddSingleton<ITimeredFunctionsService, TimeredFunctionsService>();
+            services.AddSingleton<IPaymentService, PaymentService>();
 
             //transient services
             services.AddTransient<IEmailService, EmailService>();
