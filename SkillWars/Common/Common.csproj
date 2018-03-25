@@ -50,6 +50,7 @@
     <Compile Include="Attributes\ChangePasswordAttribute.cs" />
     <Compile Include="Attributes\LanguageAttribute.cs" />
     <Compile Include="DTO\Account\ChangePasswordRequest.cs" />
+    <Compile Include="DTO\Account\ChangingContactsDTO.cs" />
     <Compile Include="DTO\Account\UserProfile.cs" />
     <Compile Include="DTO\Communication\Error.cs" />
     <Compile Include="DTO\Communication\Response.cs" />
@@ -63,6 +64,7 @@
     <Compile Include="DTO\Steam\SteamPlayerSummaryRootObject.cs" />
     <Compile Include="Entity\TokenEntity.cs" />
     <Compile Include="Entity\UserEntity.cs" />
+    <Compile Include="Enums\ConactTypes.cs" />
     <Compile Include="Enums\Languages.cs" />
     <Compile Include="Enums\OperationResults.cs" />
     <Compile Include="Enums\Roles.cs" />

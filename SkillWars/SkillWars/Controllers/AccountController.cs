@@ -170,6 +170,8 @@ namespace SkillWars.Controllers
         /// <response code="400">Confirmation date is over</response>
         /// <response code="400">This email is already used</response>
         /// <response code="400">Bad request</response>
+        /// <response code="202">Left to confirm old email</response>
+        /// <response code="202">Left to confirm new email</response>
         /// <response code="200">Success</response>
         [AllowAnonymous]
         [HttpGet("ConfirmEmailChanging/{token}")]
@@ -225,6 +227,8 @@ namespace SkillWars.Controllers
         /// <response code="400">Confirmation date is over</response>
         /// <response code="400">This phone number is already used</response>
         /// <response code="400">Bad request</response>
+        /// <response code="202">Left to confirm old phone number</response>
+        /// <response code="202">Left to confirm new phone number</response>
         /// <response code="200">Success</response>
         [AllowAnonymous]
         [HttpGet("ConfirmPhoneChanging/{token}")]
