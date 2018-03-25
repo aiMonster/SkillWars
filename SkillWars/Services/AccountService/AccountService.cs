@@ -289,7 +289,6 @@ namespace Services.AccountService
                 return response;
             }
 
-
             token.User.Email = additionalInfo.NewContact;
             _context.Tokens.Remove(token);
             _context.Tokens.Remove(anotherToken);
