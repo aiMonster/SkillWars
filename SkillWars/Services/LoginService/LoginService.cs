@@ -213,7 +213,7 @@ namespace Services.LoginService
                 response.Error = new Error(404, "Invalid username");
                 return response;
             }
-            if(user.Password == SkillWarsEncoder.Encript(password))
+            if(user.Password != SkillWarsEncoder.Encript(password))
             {
                 _logger.LogDebug("Invalid Password");
                 response.Error = new Error(400, "Invalid Password");

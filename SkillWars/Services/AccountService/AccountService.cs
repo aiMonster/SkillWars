@@ -170,27 +170,52 @@ namespace Services.AccountService
                 return response;
             }
 
-            var confirmationToken = Guid.NewGuid().ToString();
-            await _context.Tokens.AddAsync(new TokenEntity
+            //var confirmationToken = Guid.NewGuid().ToString();
+            //await _context.Tokens.AddAsync(new TokenEntity
+            //{
+            //    //UserId = user.Id,
+            //    //Id = confirmationToken,
+            //    //ExpirationDate = DateTime.UtcNow.AddDays(Convert.ToInt32(_configuration.GetSection("TokenExistenceDays")["ConfirmEmail"])),
+            //    AdditionalInfo = email
+            //});
+            //await _context.SaveChangesAsync();
+
+            var oldTokenId = Guid.NewGuid().ToString();
+            var newTokenId = Guid.NewGuid().ToString();
+            TokenEntity oldEmailToken = new TokenEntity
             {
                 UserId = user.Id,
-                Id = confirmationToken,
+                Id = oldTokenId,
                 ExpirationDate = DateTime.UtcNow.AddDays(Convert.ToInt32(_configuration.GetSection("TokenExistenceDays")["ConfirmEmail"])),
-                AdditionalInfo = email
-            });
+                AdditionalInfo = JsonConvert.SerializeObject(new ChangingContactsDTO { ContactType = ConactTypes.Old, AnotherTokenId = newTokenId, NewContact = email })
+            };
+            TokenEntity newEmailToken = new TokenEntity
+            {
+                UserId = user.Id,
+                Id = newTokenId,
+                ExpirationDate = DateTime.UtcNow.AddDays(Convert.ToInt32(_configuration.GetSection("TokenExistenceDays")["ConfirmEmail"])),
+                AdditionalInfo = JsonConvert.SerializeObject(new ChangingContactsDTO { ContactType = ConactTypes.New, AnotherTokenId = oldTokenId, NewContact = email })
+            };
+            await _context.AddAsync(oldEmailToken);
+            await _context.AddAsync(newEmailToken);
             await _context.SaveChangesAsync();
 
-            _logger.LogDebug($"User requested to change email, left send confirmation email: {email}");
+            _logger.LogDebug($"User requested to change email, left send confirmation emails: {email}");
             try
             {
-                var apiPath = _configuration["FrontLinks:ChangeEmail"] + confirmationToken;
-                var content = await _htmlGeneratorService.ConfirmEmail(apiPath, user.Language);
+                var newApiPath = _configuration["FrontLinks:ChangeEmail"] + newEmailToken.Id;
+                var newContent = await _htmlGeneratorService.ConfirmEmail(newApiPath, user.Language);
+
+                var oldApiPath = _configuration["FrontLinks:ChangeEmail"] + oldEmailToken.Id;
+                var oldContent = await _htmlGeneratorService.ConfirmEmail(oldApiPath, user.Language);
+
                 var title = _configuration.GetSection("ConfirmEmail")[user.Language.ToString()];
-                await _emailService.SendMail(email, content, title);
+                await _emailService.SendMail(email, newContent, title);
+                await _emailService.SendMail(user.Email, oldContent, title);
             }
             catch (Exception ex)
             {
-                _logger.LogError("Couldn't send confirmaiton email for " + email + "\nException:\n" + ex.Message);
+                _logger.LogError("Couldn't send confirmaiton email for " + email + " or " + user.Email +  "\nException:\n" + ex.Message);
                 response.Error = new Error(500, "Couldn't send, write for developers - " + ex.Message);
                 return response;
             }
@@ -226,15 +251,48 @@ namespace Services.AccountService
                 return response;
             }
 
-            if (await _context.Users.AnyAsync(u => u.Email == token.AdditionalInfo))
+            var additionalInfo = JsonConvert.DeserializeObject<ChangingContactsDTO>(token.AdditionalInfo);
+            var anotherToken = await _context.Tokens.Where(t => t.Id == additionalInfo.AnotherTokenId).FirstOrDefaultAsync();
+            var anotherAdditionalInfo = JsonConvert.DeserializeObject<ChangingContactsDTO>(anotherToken.AdditionalInfo);
+
+            if (await _context.Users.AnyAsync(u => u.Email == additionalInfo.NewContact))
             {
-                _logger.LogDebug($"User with such email already exists: {token.AdditionalInfo}");
+                _logger.LogDebug($"User with such email already exists: {additionalInfo.NewContact}");
                 response.Error = new Error(400, "This Email is already used");
                 return response;
             }
 
-            token.User.Email = token.AdditionalInfo;
+            switch (additionalInfo.ContactType)
+            {
+                case ConactTypes.New:
+                    additionalInfo.IsNewContactConfirmed = true;
+                    anotherAdditionalInfo.IsNewContactConfirmed = true;
+                    break;
+                case ConactTypes.Old:
+                    additionalInfo.IsOldContactConfirmed = true;
+                    anotherAdditionalInfo.IsOldContactConfirmed = true;
+                    break;
+            }
+
+            token.AdditionalInfo = JsonConvert.SerializeObject(additionalInfo);
+            anotherToken.AdditionalInfo = JsonConvert.SerializeObject(anotherAdditionalInfo);
+            await _context.SaveChangesAsync();
+
+            if(!additionalInfo.IsOldContactConfirmed)
+            {
+                response.Error = new Error(202, "Left to confirm old email");
+                return response;
+            }
+            else if(!additionalInfo.IsNewContactConfirmed)
+            {
+                response.Error = new Error(202, "Left to confirm new email");
+                return response;
+            }
+
+
+            token.User.Email = additionalInfo.NewContact;
             _context.Tokens.Remove(token);
+            _context.Tokens.Remove(anotherToken);
             await _context.SaveChangesAsync();
             response.Data = true;
 
@@ -275,24 +333,54 @@ namespace Services.AccountService
             }
 
             //generating identity token
-            string confirmationToken;
+            string oldTokenId;
             while (true)
             {
                 Random rnd = new Random();
-                confirmationToken = rnd.Next(100000, 999999).ToString();
-                if (!_context.Tokens.Any(p => p.Id == confirmationToken))
+                oldTokenId = rnd.Next(100000, 999999).ToString();
+                if (!_context.Tokens.Any(p => p.Id == oldTokenId))
+                {
+                    break;
+                }
+            }
+            string newTokenId;
+            while (true)
+            {
+                Random rnd = new Random();
+                newTokenId = rnd.Next(100000, 999999).ToString();
+                if (!_context.Tokens.Any(p => p.Id == newTokenId))
                 {
                     break;
                 }
             }
 
-            await _context.Tokens.AddAsync(new TokenEntity
+            //await _context.Tokens.AddAsync(new TokenEntity
+            //{
+            //    Id = confirmationToken,
+            //    UserId = user.Id,
+            //    AdditionalInfo = phoneNumber,
+            //    ExpirationDate = DateTime.UtcNow.AddDays(Convert.ToInt32(_configuration.GetSection("TokenExistenceDays")["RestorePassword"]))
+            //});
+            //await _context.SaveChangesAsync();
+
+            bool IsPhoneNumberAbsent = String.IsNullOrEmpty(user.PhoneNumber);
+
+            TokenEntity oldPhoneToken = new TokenEntity
             {
-                Id = confirmationToken,
                 UserId = user.Id,
-                AdditionalInfo = phoneNumber,
-                ExpirationDate = DateTime.UtcNow.AddDays(Convert.ToInt32(_configuration.GetSection("TokenExistenceDays")["RestorePassword"]))
-            });
+                Id = oldTokenId,
+                ExpirationDate = DateTime.UtcNow.AddDays(Convert.ToInt32(_configuration.GetSection("TokenExistenceDays")["ConfirmEmail"])),
+                AdditionalInfo = JsonConvert.SerializeObject(new ChangingContactsDTO { ContactType = ConactTypes.Old, AnotherTokenId = newTokenId, IsOldContactConfirmed = IsPhoneNumberAbsent, NewContact = phoneNumber })
+            };
+            TokenEntity newPhoneToken = new TokenEntity
+            {
+                UserId = user.Id,
+                Id = newTokenId,
+                ExpirationDate = DateTime.UtcNow.AddDays(Convert.ToInt32(_configuration.GetSection("TokenExistenceDays")["ConfirmEmail"])),
+                AdditionalInfo = JsonConvert.SerializeObject(new ChangingContactsDTO { ContactType = ConactTypes.New, AnotherTokenId = oldTokenId, IsOldContactConfirmed = IsPhoneNumberAbsent, NewContact = phoneNumber })
+            };
+            await _context.AddAsync(oldPhoneToken);
+            await _context.AddAsync(newPhoneToken);
             await _context.SaveChangesAsync();
 
             _logger.LogDebug($"User requested to change or add phoneNumber, left send confirmation sms: {phoneNumber}");
@@ -300,7 +388,11 @@ namespace Services.AccountService
             {
                 var content = _configuration.GetSection("ChangePhoneNumberSms")[user.Language.ToString()];
                 ////==== Change email to phone number
-                await _smsService.SendSms(user.Email, content.Replace("#token", confirmationToken));
+                await _smsService.SendSms(user.Email, content.Replace("#token", newTokenId + " " + phoneNumber));
+                if(!IsPhoneNumberAbsent)
+                {
+                    await _smsService.SendSms(user.Email, content.Replace("#token", oldTokenId + " " + user.PhoneNumber));
+                }                
             }
             catch (Exception ex)
             {
@@ -339,18 +431,51 @@ namespace Services.AccountService
                 _context.Tokens.Remove(token);
                 response.Error = new Error(400, "Confirmation date is over");
                 return response;
-            }
+            }            
 
-            if (await _context.Users.AnyAsync(u => u.PhoneNumber == token.AdditionalInfo))
+            var additionalInfo = JsonConvert.DeserializeObject<ChangingContactsDTO>(token.AdditionalInfo);
+            var anotherToken = await _context.Tokens.Where(t => t.Id == additionalInfo.AnotherTokenId).FirstOrDefaultAsync();
+            var anotherAdditionalInfo = JsonConvert.DeserializeObject<ChangingContactsDTO>(anotherToken.AdditionalInfo);
+
+            if (await _context.Users.AnyAsync(u => u.PhoneNumber == additionalInfo.NewContact))
             {
-                _logger.LogDebug($"User with such phone already exists: {token.AdditionalInfo}");
+                _logger.LogDebug($"User with such phone already exists: {additionalInfo.NewContact}");
                 response.Error = new Error(400, "This phone number is already used");
                 return response;
             }
 
-            token.User.PhoneNumber = token.AdditionalInfo;
+            switch (additionalInfo.ContactType)
+            {
+                case ConactTypes.New:
+                    additionalInfo.IsNewContactConfirmed = true;
+                    anotherAdditionalInfo.IsNewContactConfirmed = true;
+                    break;
+                case ConactTypes.Old:
+                    additionalInfo.IsOldContactConfirmed = true;
+                    anotherAdditionalInfo.IsOldContactConfirmed = true;
+                    break;
+            }
+
+            token.AdditionalInfo = JsonConvert.SerializeObject(additionalInfo);
+            anotherToken.AdditionalInfo = JsonConvert.SerializeObject(anotherAdditionalInfo);
+            await _context.SaveChangesAsync();
+
+            if (!additionalInfo.IsOldContactConfirmed)
+            {
+                response.Error = new Error(202, "Left to confirm old email");
+                return response;
+            }
+            else if (!additionalInfo.IsNewContactConfirmed)
+            {
+                response.Error = new Error(202, "Left to confirm new email");
+                return response;
+            }
+
+
+            token.User.PhoneNumber = additionalInfo.NewContact;
             token.User.IsPhoneNumberConfirmed = true;
             _context.Tokens.Remove(token);
+            _context.Tokens.Remove(anotherToken);
             await _context.SaveChangesAsync();
             response.Data = true;
 

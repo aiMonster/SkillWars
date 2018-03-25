@@ -1,8 +1,8 @@
 ﻿{
   "ConfirmEmail": {
-    "Ukr": "Підтвердження аккаунту",
-    "Eng": "Account confirmaiton",
-    "Rus": "Подтверждения аккаунтта"
+    "Ukr": "Підтвердження пошторису",
+    "Eng": "Email confirmaiton",
+    "Rus": "Подтверждения почти"
   },
   "RestorePassword": {
     "Ukr": "Відноілння паролю",
