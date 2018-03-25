@@ -58,6 +58,13 @@ namespace SkillWars.Controllers
             return "Only for admin";
         }
 
+        [AllowAnonymous]
+        [HttpGet("HardLogs")]
+        public async Task<List<string>> GetLogs()
+        {
+            return HardLogger.logs;
+        }
+
 
 
     }

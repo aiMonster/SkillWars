@@ -27,6 +27,7 @@ using Microsoft.IdentityModel.Tokens;
 using Services.AccountService;
 using Services.TimeredFunctionsService;
 using Services.PaymentService;
+using SkillWars.WebSockets;
 
 namespace SkillWars
 {
@@ -102,16 +103,17 @@ namespace SkillWars
 
 
             services.AddCors();
-            services.AddMvc();
-            //services.AddMvc(options =>
-            //{
-            //    options.Filters.Add(new RequireHttpsAttribute());
-            //});
+            services.AddWebSocketManager();
+            //services.AddMvc();
+            services.AddMvc(options =>
+            {
+                options.Filters.Add(new RequireHttpsAttribute());
+            });
 
             return services.BuildServiceProvider();
         }
                 
-        public async void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, IApplicationLifetime lifetime, IConfigurationRoot configuration, IHtmlGeneratorService htmlGeneratorService, ITimeredFunctionsService timeredFunctionsService)
+        public async void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, IApplicationLifetime lifetime, IConfigurationRoot configuration, IHtmlGeneratorService htmlGeneratorService, ITimeredFunctionsService timeredFunctionsService, IServiceProvider serviceProvider)
         {            
             SetUpLogger(env, loggerFactory, lifetime, configuration);
             app.UseExceptionHandlerMiddleware();
@@ -126,6 +128,15 @@ namespace SkillWars
             await timeredFunctionsService.Setup();
 
             app.UseCors(builder => builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
+
+            var wsOptions = new WebSocketOptions()
+            {
+                KeepAliveInterval = TimeSpan.FromSeconds(60),
+                ReceiveBufferSize = 4 * 1024
+            };
+
+            app.UseWebSockets(wsOptions);
+            app.MapWebSocketManager("/chat", serviceProvider.GetService<ChatRoomHandler>());
             app.UseMvc();
         }
 
@@ -149,6 +160,7 @@ namespace SkillWars
                         .WriteTo.RollingFile(@"Logs\Info-{Date}.log"))                        
                     .WriteTo.Logger(l => l.Filter.ByIncludingOnly(e => e.Level == LogEventLevel.Debug)
                         .WriteTo.RollingFile(@"Logs\Debug-{Date}.log"))
+                        .WriteTo.Slack(configuration.GetSection("SlackChannels")["Fatal"])
                     .WriteTo.Logger(l => l.Filter.ByIncludingOnly(e => e.Level == LogEventLevel.Warning)
                         .WriteTo.RollingFile(@"Logs\Warning-{Date}.log"))
                     .WriteTo.Logger(l => l.Filter.ByIncludingOnly(e => e.Level == LogEventLevel.Error)
@@ -166,6 +178,7 @@ namespace SkillWars
                         .WriteTo.RollingFile(@"Logs\Info-{Date}.log"))
                     .WriteTo.Logger(l => l.Filter.ByIncludingOnly(e => e.Level == LogEventLevel.Debug)
                         .WriteTo.RollingFile(@"Logs\Debug-{Date}.log"))
+                        .WriteTo.Slack(configuration.GetSection("SlackChannels")["Fatal"])
                     .WriteTo.Logger(l => l.Filter.ByIncludingOnly(e => e.Level == LogEventLevel.Warning)
                         .WriteTo.RollingFile(@"Logs\Warning-{Date}.log"))
                     .WriteTo.Logger(l => l.Filter.ByIncludingOnly(e => e.Level == LogEventLevel.Error)
