@@ -91,64 +91,7 @@ namespace Services.LoginService
             }
             _logger.LogDebug($"Registration confirmation email successfully sended: {request.Email}");
             return response;
-        }
-
-        public async Task<Response<string>> SteamRegister(SteamRegistrationDTO request)
-        {
-            _logger.LogDebug($"Registering new user by steam: {request.Email}/{request.SteamId}");
-            var response = new Response<string>();
-            if (await _context.Users.AnyAsync(p => p.Email == request.Email))
-            {
-                _logger.LogDebug($"User with such email already exists: {request.Email}");
-                response.Error = new Error(400, "This email is already used, go to account page and add steam to your account");
-                return response;
-            }
-
-            var user = await _context.Users.FirstOrDefaultAsync(p => p.SteamId == request.SteamId);
-            if(user == null)
-            {
-                _logger.LogDebug($"User with such steamId doesn't exists: {request.SteamId}");
-                response.Error = new Error(404, "User with such steamId is not found");
-                return response;
-            }
-
-            if (user.IsEmailConfirmed)
-            {
-                response.Error = new Error(409, "Your account email is already confirmed - " + user.Email);
-                return response;
-            }
-
-            user.Email = request.Email;
-            user.Language = request.Language;
-            await _context.SaveChangesAsync();
-            response.Data = request.Email;
-
-            var confirmationToken = Guid.NewGuid().ToString();
-            await _context.Tokens.AddAsync(new TokenEntity
-            {
-                UserId = user.Id,
-                Id = confirmationToken,
-                ExpirationDate = DateTime.UtcNow.AddDays(Convert.ToInt32(_configuration.GetSection("TokenExistenceDays")["ConfirmEmail"]))
-            });
-            await _context.SaveChangesAsync();
-
-            _logger.LogDebug($"User registered by steam,sending confirmation email: {request.Email}");
-            try
-            {
-                var apiPath = _configuration["FrontLinks:ConfirmEmail"] + confirmationToken;
-                var content = await _htmlGeneratorService.ConfirmEmail(apiPath, user.Language);
-                var title = _configuration.GetSection("ConfirmEmail")[user.Language.ToString()];
-                await _emailService.SendMail(user.Email, content, title);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError("Couldn't send registration confirmaiton email by steam for " + user.Email + "\nException:\n" + ex.Message);
-                response.Error = new Error(500, "Couldn't send, write for developers");
-                return response;
-            }
-            _logger.LogDebug($"Registation by steam confirmation email successfully sended to : {request.Email}");
-            return response;
-        }
+        }       
 
         public async Task<Response<UserProfile>> ConfirmEmail(string confirmationToken)
         {
@@ -276,22 +219,8 @@ namespace Services.LoginService
                 }
 
                 _context.Users.Add(new UserEntity(steamId, userName));
-                await _context.SaveChangesAsync();
-                response.Error = new Error(202, "Left to add email");
-                return response;
-            }
-
-            if (String.IsNullOrEmpty(user.Email))
-            {
-                response.Error = new Error(403, "Email is not set");
-                return response;
-            }
-
-            if (!user.IsEmailConfirmed)
-            {
-                response.Error = new Error(403, "Email is not confirmed");
-                return response;
-            }
+                await _context.SaveChangesAsync();               
+            }           
 
             var claims = new List<Claim>
             {
