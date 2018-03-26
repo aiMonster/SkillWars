@@ -9,8 +9,7 @@ namespace Common.Interfaces.Services
 {
     public interface ILoginService
     {
-        Task<Response<string>> Register(RegistrationDTO request);
-        Task<Response<string>> SteamRegister(SteamRegistrationDTO request);
+        Task<Response<string>> Register(RegistrationDTO request);        
         Task<Response<UserProfile>> ConfirmEmail(string confirmationToken);
         Task<TokenResponse> GetToken(ClaimsIdentity identity);
         Task<Response<ClaimsIdentity>> GetIdentity(string login, string password);

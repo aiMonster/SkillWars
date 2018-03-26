@@ -170,16 +170,8 @@ namespace Services.AccountService
                 return response;
             }
 
-            //var confirmationToken = Guid.NewGuid().ToString();
-            //await _context.Tokens.AddAsync(new TokenEntity
-            //{
-            //    //UserId = user.Id,
-            //    //Id = confirmationToken,
-            //    //ExpirationDate = DateTime.UtcNow.AddDays(Convert.ToInt32(_configuration.GetSection("TokenExistenceDays")["ConfirmEmail"])),
-            //    AdditionalInfo = email
-            //});
-            //await _context.SaveChangesAsync();
 
+            bool IsEmailAbsent = String.IsNullOrEmpty(user.Email);
             var oldTokenId = Guid.NewGuid().ToString();
             var newTokenId = Guid.NewGuid().ToString();
             TokenEntity oldEmailToken = new TokenEntity
@@ -187,14 +179,14 @@ namespace Services.AccountService
                 UserId = user.Id,
                 Id = oldTokenId,
                 ExpirationDate = DateTime.UtcNow.AddDays(Convert.ToInt32(_configuration.GetSection("TokenExistenceDays")["ConfirmEmail"])),
-                AdditionalInfo = JsonConvert.SerializeObject(new ChangingContactsDTO { ContactType = ConactTypes.Old, AnotherTokenId = newTokenId, NewContact = email })
+                AdditionalInfo = JsonConvert.SerializeObject(new ChangingContactsDTO { ContactType = ConactTypes.Old, AnotherTokenId = newTokenId, IsOldContactConfirmed = IsEmailAbsent, NewContact = email })
             };
             TokenEntity newEmailToken = new TokenEntity
             {
                 UserId = user.Id,
                 Id = newTokenId,
                 ExpirationDate = DateTime.UtcNow.AddDays(Convert.ToInt32(_configuration.GetSection("TokenExistenceDays")["ConfirmEmail"])),
-                AdditionalInfo = JsonConvert.SerializeObject(new ChangingContactsDTO { ContactType = ConactTypes.New, AnotherTokenId = oldTokenId, NewContact = email })
+                AdditionalInfo = JsonConvert.SerializeObject(new ChangingContactsDTO { ContactType = ConactTypes.New, AnotherTokenId = oldTokenId, IsOldContactConfirmed = IsEmailAbsent, NewContact = email })
             };
             await _context.AddAsync(oldEmailToken);
             await _context.AddAsync(newEmailToken);
@@ -204,14 +196,17 @@ namespace Services.AccountService
             try
             {
                 var newApiPath = _configuration["FrontLinks:ChangeEmail"] + newEmailToken.Id;
-                var newContent = await _htmlGeneratorService.ConfirmEmail(newApiPath, user.Language);
-
-                var oldApiPath = _configuration["FrontLinks:ChangeEmail"] + oldEmailToken.Id;
-                var oldContent = await _htmlGeneratorService.ConfirmEmail(oldApiPath, user.Language);
+                var newContent = await _htmlGeneratorService.ConfirmEmail(newApiPath, user.Language);                
 
                 var title = _configuration.GetSection("ConfirmEmail")[user.Language.ToString()];
                 await _emailService.SendMail(email, newContent, title);
-                await _emailService.SendMail(user.Email, oldContent, title);
+                
+                if(!IsEmailAbsent)
+                {
+                    var oldApiPath = _configuration["FrontLinks:ChangeEmail"] + oldEmailToken.Id;
+                    var oldContent = await _htmlGeneratorService.ConfirmEmail(oldApiPath, user.Language);
+                    await _emailService.SendMail(user.Email, oldContent, title);
+                }
             }
             catch (Exception ex)
             {
@@ -291,6 +286,7 @@ namespace Services.AccountService
 
 
             token.User.Email = additionalInfo.NewContact;
+            token.User.IsEmailConfirmed = true;
             _context.Tokens.Remove(token);
             _context.Tokens.Remove(anotherToken);
             await _context.SaveChangesAsync();

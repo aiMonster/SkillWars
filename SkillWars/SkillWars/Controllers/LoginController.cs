@@ -44,32 +44,7 @@ namespace SkillWars.Controllers
             return Ok(response.Data);
         }
 
-        /// <summary>
-        /// Register new user with steam
-        /// </summary>
-        /// <returns></returns>
-        /// <response code="500">Internal error on server</response>
-        /// <response code="409">Your account email is already confirmed</response>
-        /// <response code="404">User wiht such id is not found</response>
-        /// <response code="400">This email is already used</response>   
-        /// <response code="400">Bad request</response>
-        /// <response code="200">Success</response>
-        [HttpPost("SteamRegister")]
-        public async Task<IActionResult> SteamRegister([FromBody]SteamRegistrationDTO request)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            var response = await _loginService.SteamRegister(request);
-            if (response.Error != null)
-            {
-                return StatusCode(response.Error.ErrorCode, response.Error);
-            }
-            return Ok(response.Data);
-        }
-
+       
         /// <summary>
         /// Confirming email
         /// </summary>
@@ -129,11 +104,8 @@ namespace SkillWars.Controllers
         /// </summary>
         /// <returns></returns>
         /// <response code="500">Internal error on server</response>       
-        /// <response code="404">User with such id not found on steam</response>
-        /// <response code="403">Email is not set</response>
-        /// <response code="403">Email is not confirmed</response>
-        /// <response code="400">Bad request</response>
-        /// <response code="202">Left to register email</response>
+        /// <response code="404">User with such id not found on steam</response>       
+        /// <response code="400">Bad request</response>       
         /// <response code="200">Success</response>
         [HttpPost("Token/{steamId}")]
         public async Task<IActionResult> TokenBySteam([FromRoute]string steamId)
