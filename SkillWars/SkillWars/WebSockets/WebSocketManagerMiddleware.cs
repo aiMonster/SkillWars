@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using SkillWars.Handlers.WebSockets;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,8 +14,7 @@ namespace SkillWars.WebSockets
         private readonly RequestDelegate _next;
         private WebSocketHandler _webSocketHandler { get; set; }
 
-        public WebSocketManagerMiddleware(RequestDelegate next,
-                                          WebSocketHandler webSocketHandler)
+        public WebSocketManagerMiddleware(RequestDelegate next, WebSocketHandler webSocketHandler)
         {
             _next = next;
             _webSocketHandler = webSocketHandler;

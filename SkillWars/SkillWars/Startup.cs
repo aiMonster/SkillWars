@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using Common.Interfaces.Services;
+﻿using Common.Interfaces.Services;
 using DataAccessLayer.Context;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -14,20 +8,22 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using Microsoft.Extensions.PlatformAbstractions;
+using Microsoft.IdentityModel.Tokens;
 using Serilog;
 using Serilog.Events;
 using Serilog.Sinks.Slack;
-using Services.LoginService;
-using Services.SendingService;
-using SkillWars.Extensions;
-using Swashbuckle.AspNetCore.Swagger;
-using Microsoft.IdentityModel.Tokens;
 using Services.AccountService;
-using Services.TimeredFunctionsService;
+using Services.LoginService;
 using Services.PaymentService;
+using Services.SendingService;
+using Services.TimeredFunctionsService;
+using SkillWars.Extensions;
+using SkillWars.Handlers.WebSockets;
 using SkillWars.WebSockets;
+using Swashbuckle.AspNetCore.Swagger;
+using System;
+using System.Collections.Generic;
+using System.IO;
 
 namespace SkillWars
 {

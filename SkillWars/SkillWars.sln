@@ -11,8 +11,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataAccessLayer", "DataAcce
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Services", "Services\Services.csproj", "{4A751F3B-23C5-4D63-BCD3-C93293CAF00E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebSocketLayer", "WebSocketLayer\WebSocketLayer.csproj", "{55AF4BC1-099A-4190-8C57-DD8305CF9ADB}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -35,10 +33,6 @@ Global
 		{4A751F3B-23C5-4D63-BCD3-C93293CAF00E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4A751F3B-23C5-4D63-BCD3-C93293CAF00E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4A751F3B-23C5-4D63-BCD3-C93293CAF00E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{55AF4BC1-099A-4190-8C57-DD8305CF9ADB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{55AF4BC1-099A-4190-8C57-DD8305CF9ADB}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{55AF4BC1-099A-4190-8C57-DD8305CF9ADB}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{55AF4BC1-099A-4190-8C57-DD8305CF9ADB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

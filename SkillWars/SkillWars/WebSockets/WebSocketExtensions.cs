@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
+using SkillWars.Handlers.WebSockets;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,9 +12,7 @@ namespace SkillWars.WebSockets
 {
     public static class WebSocketExtensions
     {
-        public static IApplicationBuilder MapWebSocketManager(this IApplicationBuilder app,
-                                                              PathString path,
-                                                              WebSocketHandler handler)
+        public static IApplicationBuilder MapWebSocketManager(this IApplicationBuilder app, PathString path, WebSocketHandler handler)
         {
             return app.Map(path, (_app) => _app.UseMiddleware<WebSocketManagerMiddleware>(handler));
         }
