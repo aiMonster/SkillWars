@@ -12,8 +12,8 @@ using System;
 namespace DataAccessLayer.Migrations
 {
     [DbContext(typeof(SkillWarsContext))]
-    [Migration("20180401103917_initial")]
-    partial class initial
+    [Migration("20180402150405_LobbieMigration")]
+    partial class LobbieMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -109,7 +109,7 @@ namespace DataAccessLayer.Migrations
 
                     b.Property<string>("SteamId");
 
-                    b.Property<int>("TeamId");
+                    b.Property<int?>("TeamId");
 
                     b.HasKey("Id");
 
@@ -139,7 +139,7 @@ namespace DataAccessLayer.Migrations
                     b.HasOne("Common.Entity.TeamEntity", "Team")
                         .WithMany("Users")
                         .HasForeignKey("TeamId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.SetNull);
                 });
 #pragma warning restore 612, 618
         }

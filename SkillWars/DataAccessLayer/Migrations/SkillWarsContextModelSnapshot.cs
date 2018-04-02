@@ -21,6 +21,46 @@ namespace DataAccessLayer.Migrations
                 .HasAnnotation("ProductVersion", "2.0.1-rtm-125")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+            modelBuilder.Entity("Common.Entity.LobbieEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<int>("AmountPlayers");
+
+                    b.Property<double>("Bet");
+
+                    b.Property<bool>("IsPrivate");
+
+                    b.Property<string>("Map");
+
+                    b.Property<string>("Password");
+
+                    b.Property<DateTime>("StartingTime");
+
+                    b.Property<int>("Status");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Lobbies");
+                });
+
+            modelBuilder.Entity("Common.Entity.TeamEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<int>("LobbieId");
+
+                    b.Property<int>("Type");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("LobbieId");
+
+                    b.ToTable("Teams");
+                });
+
             modelBuilder.Entity("Common.Entity.TokenEntity", b =>
                 {
                     b.Property<string>("Id")
@@ -68,9 +108,21 @@ namespace DataAccessLayer.Migrations
 
                     b.Property<string>("SteamId");
 
+                    b.Property<int?>("TeamId");
+
                     b.HasKey("Id");
 
+                    b.HasIndex("TeamId");
+
                     b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("Common.Entity.TeamEntity", b =>
+                {
+                    b.HasOne("Common.Entity.LobbieEntity", "Lobbie")
+                        .WithMany("Teams")
+                        .HasForeignKey("LobbieId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("Common.Entity.TokenEntity", b =>
@@ -79,6 +131,14 @@ namespace DataAccessLayer.Migrations
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("Common.Entity.UserEntity", b =>
+                {
+                    b.HasOne("Common.Entity.TeamEntity", "Team")
+                        .WithMany("Users")
+                        .HasForeignKey("TeamId")
+                        .OnDelete(DeleteBehavior.SetNull);
                 });
 #pragma warning restore 612, 618
         }

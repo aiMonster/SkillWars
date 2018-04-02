@@ -115,17 +115,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Context\SkillWarsContext.cs" />
-    <Compile Include="Migrations\20180401103917_initial.cs" />
-    <Compile Include="Migrations\20180401103917_initial.designer.cs">
-      <DependentUpon>20180401103917_initial.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\20180401104535_lob.cs" />
-    <Compile Include="Migrations\20180401104535_lob.designer.cs">
-      <DependentUpon>20180401104535_lob.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\20180401121247_lob2.cs" />
-    <Compile Include="Migrations\20180401121247_lob2.designer.cs">
-      <DependentUpon>20180401121247_lob2.cs</DependentUpon>
+    <Compile Include="Migrations\20180402150405_LobbieMigration.cs" />
+    <Compile Include="Migrations\20180402150405_LobbieMigration.designer.cs">
+      <DependentUpon>20180402150405_LobbieMigration.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\SkillWarsContextModelSnapshot.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
