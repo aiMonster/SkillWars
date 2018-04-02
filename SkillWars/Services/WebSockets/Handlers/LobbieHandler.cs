@@ -1,7 +1,4 @@
 ﻿using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net.WebSockets;
 using System.Text;
 using System.Threading.Tasks;
@@ -19,16 +16,15 @@ namespace Services.WebSockets.Handlers
 
         public override Task OnConnected(WebSocket socket)
         {
-            _logger.LogCritical("Really new user");
+            _logger.LogDebug("Connected new user");
             return base.OnConnected(socket);
         }
 
         public override Task OnDisconnected(WebSocket socket)
         {
-            _logger.LogCritical("Really lost a user");
+            _logger.LogDebug("Disconnected a user");
             return base.OnDisconnected(socket);
         }
-
 
 
         public override async Task ReceiveAsync(WebSocket socket, WebSocketReceiveResult result, byte[] buffer)

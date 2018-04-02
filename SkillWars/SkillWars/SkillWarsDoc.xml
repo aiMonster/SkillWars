@@ -102,6 +102,48 @@
             <response code="202">Left to confirm new phone number</response>
             <response code="200">Success</response>
         </member>
+        <member name="M:SkillWars.Controllers.LobbieController.CreateLobbie(Common.DTO.Lobbie.LobbieRequest)">
+            <summary>
+            Create lobbie
+            </summary>
+            <returns></returns>
+            <response code="500">Internal error on server</response>        
+            <response code="403">You already participate in lobbie and can't create another</response>
+            <response code="403">Not enough money</response>
+            <response code="200">Success</response>
+        </member>
+        <member name="M:SkillWars.Controllers.LobbieController.GetAll">
+            <summary>
+            Get all lobbies
+            </summary>
+            <returns></returns>
+            <response code="500">Internal error on server</response>        
+            <response code="200">Success</response>
+        </member>
+        <member name="M:SkillWars.Controllers.LobbieController.Leave">
+            <summary>
+            Leave lobbie
+            </summary>
+            <returns></returns>
+            <response code="500">Internal error on server</response>  
+            <response code="403">Seems like you don't participate here</response>
+            <response code="403">Lobbie already started idiot</response>
+            <response code="200">Success</response>
+        </member>
+        <member name="M:SkillWars.Controllers.LobbieController.Participate(Common.DTO.Lobbie.ParticipatingRequest)">
+            <summary>
+            Participate lobbie
+            </summary>
+            <returns></returns>
+            <response code="500">Internal error on server</response>   
+            <response code="404">Such lobbie not found</response>
+            <response code="403">Seems like you already participate in the any lobbie</response>
+            <response code="403">Lobbie already started</response>
+            <response code="403">Team is full</response>
+            <response code="403">Not enough money</response>
+            <response code="403">Incorrect password</response>      
+            <response code="200">Success</response>
+        </member>
         <member name="M:SkillWars.Controllers.LoginController.Register(Common.DTO.Login.RegistrationDTO)">
             <summary>
             Regiser new user

@@ -27,37 +27,23 @@ namespace Services.WebSockets
         {
             return _sockets.FirstOrDefault(p => p.Value == socket).Key;
         }
+
         public void AddSocket(WebSocket socket)
-        {
-            string sId = CreateConnectionId();
+        {            
+            string sId = Guid.NewGuid().ToString();
             while (!_sockets.TryAdd(sId, socket))
             {
-                sId = CreateConnectionId();
+                sId = Guid.NewGuid().ToString();
             }
         }
 
         public async Task RemoveSocket(string id)
         {
-            try
-            {
-                WebSocket socket;
-
-                _sockets.TryRemove(id, out socket);
-
-                await socket.CloseOutputAsync(WebSocketCloseStatus.NormalClosure, null, CancellationToken.None);
-
-
-            }
-            catch (Exception)
-            {
-
-            }
-
+            
+            WebSocket socket;
+            _sockets.TryRemove(id, out socket);
+            await socket.CloseOutputAsync(WebSocketCloseStatus.NormalClosure, null, CancellationToken.None);            
         }
-
-        private string CreateConnectionId()
-        {
-            return Guid.NewGuid().ToString();
-        }
+        
     }
 }

@@ -33,6 +33,7 @@ namespace Services.LobbieService
 
         public async Task<Response<LobbieDTO>> CreateLobbieAsync(LobbieRequest request, int userId)
         {
+            _logger.LogDebug("Creating lobbie");
             var response = new Response<LobbieDTO>();
 
             var user = await _context.Users.Where(u => u.Id == userId).FirstOrDefaultAsync();
@@ -62,6 +63,7 @@ namespace Services.LobbieService
 
         public async Task<Response<bool>> LeaveLobbieAsync(int userId)
         {
+            _logger.LogDebug("Leaving lobbie");
             var response = new Response<bool>();
 
             var user = await _context.Users.Where(u => u.Id == userId).FirstOrDefaultAsync();
@@ -73,7 +75,7 @@ namespace Services.LobbieService
 
             if(team == null)
             {
-                response.Error = new Error(404, "Seems like you don't participate here");
+                response.Error = new Error(403, "Seems like you don't participate here");
                 return response;
             }
             else if(team.Lobbie.Status == LobbieStatusTypes.Started)
@@ -107,6 +109,7 @@ namespace Services.LobbieService
 
         public async Task<Response<bool>> ParticipateLobbieAsync(ParticipatingRequest request, int userId)
         {
+            _logger.LogDebug("Participating lobbie");
             var response = new Response<bool>();
 
             var user = await _context.Users.Where(u => u.Id == userId).FirstOrDefaultAsync();
@@ -157,6 +160,11 @@ namespace Services.LobbieService
                                                        { User = new UserInfo(user), LobbieId = lobbie.Id },
                                                        NotificationTypes.UserParticipated));
 
+            if (lobbie.Teams[0].Users.Count + lobbie.Teams[1].Users.Count == lobbie.AmountPlayers)
+            {
+                await StartGame(lobbie.Id);
+            }
+
             return response;
         }
 
@@ -170,6 +178,7 @@ namespace Services.LobbieService
 
         public async Task CheckLobbies()
         {
+            
             var toUpdate = await _context.Lobbies.Where(l => l.StartingTime <= DateTime.UtcNow && l.Status == LobbieStatusTypes.Expecting)
                                                  .Include(l => l.Teams)
                                                     .ThenInclude(t => t.Users)
@@ -188,11 +197,15 @@ namespace Services.LobbieService
                 {
                     lobbie.Status = LobbieStatusTypes.Started;
                     await _context.SaveChangesAsync();
-                    await _socketHandler.SendMessageToAllAsync(new SocketMessage<int>(lobbie.Id, NotificationTypes.LobbieStarted));
 
-                    //creating gaming server and sending keys and ohter stuff
+                    await StartGame(lobbie.Id);                    
                 }                
             }
+        }
+
+        private async Task StartGame(int lobbieId)
+        {
+            await _socketHandler.SendMessageToAllAsync(new SocketMessage<int>(lobbieId, NotificationTypes.LobbieStarted));
         }
 
         //================== FOR TESTS ONLY ========================        

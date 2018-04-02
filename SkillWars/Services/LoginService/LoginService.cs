@@ -30,18 +30,16 @@ namespace Services.LoginService
         private readonly IEmailService _emailService;
         private readonly SkillWarsContext _context;
         private readonly ISmsService _smsService;
-        private readonly ILogger _logger;
-        private readonly LobbieHandler _handler;
+        private readonly ILogger _logger;      
 
-        public LoginService(SkillWarsContext context, IConfigurationRoot configurtation, IEmailService emailService, ILoggerFactory loggerFactory, IHtmlGeneratorService htmlGeneratorService, ISmsService smsService, LobbieHandler handler)
+        public LoginService(SkillWarsContext context, IConfigurationRoot configurtation, IEmailService emailService, ILoggerFactory loggerFactory, IHtmlGeneratorService htmlGeneratorService, ISmsService smsService)
         {
             _logger = loggerFactory.CreateLogger<LoginService>();
             _htmlGeneratorService = htmlGeneratorService;            
             _configuration = configurtation;
             _emailService = emailService;
             _smsService = smsService;
-            _context = context;
-            _handler = handler;
+            _context = context;          
         }
 
         public async Task<Response<string>> Register (RegistrationDTO request)
@@ -474,8 +472,7 @@ namespace Services.LoginService
 
         //================== FOR TESTS ONLY ========================
         public async Task<List<UserProfile>> GetAllUsers()
-        {
-            await _handler.SendMessageToAllAsync("Babak");
+        {            
             return await _context.Users.Select(u => new UserProfile(u)).ToListAsync();
         }
 

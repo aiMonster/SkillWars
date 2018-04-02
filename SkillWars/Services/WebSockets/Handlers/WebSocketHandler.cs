@@ -1,7 +1,5 @@
 ﻿using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net.WebSockets;
 using System.Text;
 using System.Threading;
@@ -20,14 +18,12 @@ namespace Services.WebSockets.Handlers
         }
 
         public virtual async Task OnConnected(WebSocket socket)
-        {
-            //HardLogger.logs.Add("Connected");
+        {            
             WebSocketConnectionManager.AddSocket(socket);
         }
 
         public virtual async Task OnDisconnected(WebSocket socket)
-        {
-            //HardLogger.logs.Add("Disconncected");
+        {            
             await WebSocketConnectionManager.RemoveSocket(WebSocketConnectionManager.GetId(socket));
         }
 
@@ -46,14 +42,7 @@ namespace Services.WebSockets.Handlers
 
         public async Task SendMessageAsync(string socketId, string message)
         {
-            try
-            {
-                await SendMessageAsync(WebSocketConnectionManager.GetSocketById(socketId), message);
-            }
-            catch (Exception)
-            {
-
-            }
+            await SendMessageAsync(WebSocketConnectionManager.GetSocketById(socketId), message);           
         }
 
         public async Task SendMessageToAllAsync(string message)
