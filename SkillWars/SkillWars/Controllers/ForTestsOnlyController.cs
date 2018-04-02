@@ -12,11 +12,25 @@ namespace SkillWars.Controllers
     public class ForTestsOnlyController : Controller
     {
         private readonly ILoginService _loginService;
+        private readonly ILobbieService _lobbieService;
 
-        public ForTestsOnlyController(ILoginService loginService)
+        public ForTestsOnlyController(ILoginService loginService, ILobbieService lobbieService)
         {
             _loginService = loginService;
+            _lobbieService = lobbieService;
         }
+        [AllowAnonymous]
+        [HttpDelete("Lobbies/{id}")]
+        public async Task<IActionResult> RemoveLobbieById(int id)
+        {
+            var response = await _lobbieService.RemoveLobbieById(id);
+            if (response.Error != null)
+            {
+                return StatusCode(response.Error.ErrorCode, response.Error);
+            }
+            return Ok(response.Data);
+        }
+
 
         [AllowAnonymous]
         [HttpGet("Users")]

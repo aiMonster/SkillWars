@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Http;
-using SkillWars.Handlers.WebSockets;
+﻿using Common.Interfaces.Services;
+using Microsoft.AspNetCore.Http;
+using Services.WebSockets.Handlers;
+using SkillWars.WebSockets.Handlers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +9,7 @@ using System.Net.WebSockets;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace SkillWars.WebSockets
+namespace SkillWars.Extensions
 {
     public class WebSocketManagerMiddleware
     {

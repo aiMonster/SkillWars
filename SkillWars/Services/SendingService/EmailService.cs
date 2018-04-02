@@ -29,12 +29,12 @@ namespace Services.SendingService
             _messagesSended = 0;
         }
 
-        public async Task SendMail(string email, string message, string subject, string filePath = null)
+        public async Task SendMailAsync(string email, string message, string subject, string filePath = null)
         {
-            await SendMail(new List<string> { email }, message, subject, filePath);
+            await SendMailAsync(new List<string> { email }, message, subject, filePath);
         }
                 
-        public async Task SendMail(List<string> emails, string message, string subject, string filePath = null)
+        public async Task SendMailAsync(List<string> emails, string message, string subject, string filePath = null)
         {
             using (MailMessage Message = new MailMessage()
             {

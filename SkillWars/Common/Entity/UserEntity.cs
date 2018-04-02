@@ -31,6 +31,9 @@ namespace Common.Entity
 
         public DateTime RegistrationDate { get; set; }
 
+        public int? TeamId { get; set; }
+        public TeamEntity Team { get; set; }
+
         public UserEntity() { }
 
         public UserEntity(RegistrationDTO request)

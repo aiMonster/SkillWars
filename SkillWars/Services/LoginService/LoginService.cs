@@ -12,6 +12,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
+using Services.WebSockets.Handlers;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
@@ -30,9 +31,9 @@ namespace Services.LoginService
         private readonly SkillWarsContext _context;
         private readonly ISmsService _smsService;
         private readonly ILogger _logger;
-        
+        private readonly LobbieHandler _handler;
 
-        public LoginService(SkillWarsContext context, IConfigurationRoot configurtation, IEmailService emailService, ILoggerFactory loggerFactory, IHtmlGeneratorService htmlGeneratorService, ISmsService smsService)
+        public LoginService(SkillWarsContext context, IConfigurationRoot configurtation, IEmailService emailService, ILoggerFactory loggerFactory, IHtmlGeneratorService htmlGeneratorService, ISmsService smsService, LobbieHandler handler)
         {
             _logger = loggerFactory.CreateLogger<LoginService>();
             _htmlGeneratorService = htmlGeneratorService;            
@@ -40,6 +41,7 @@ namespace Services.LoginService
             _emailService = emailService;
             _smsService = smsService;
             _context = context;
+            _handler = handler;
         }
 
         public async Task<Response<string>> Register (RegistrationDTO request)
@@ -81,7 +83,7 @@ namespace Services.LoginService
                 var apiPath = _configuration["FrontLinks:ConfirmEmail"] + confirmationToken;
                 var content = await _htmlGeneratorService.ConfirmEmail(apiPath, user.Language);
                 var title = _configuration.GetSection("ConfirmEmail")[user.Language.ToString()];
-                await _emailService.SendMail(user.Email, content, title);
+                await _emailService.SendMailAsync(user.Email, content, title);
             }
             catch(Exception ex)
             {
@@ -132,7 +134,7 @@ namespace Services.LoginService
             {               
                 var content = await _htmlGeneratorService.EmailConfirmed(token.User.Language);
                 var title = _configuration.GetSection("ConfirmEmail")[token.User.Language.ToString()];
-                await _emailService.SendMail(token.User.Email, content, title);
+                await _emailService.SendMailAsync(token.User.Email, content, title);
             }
             catch (Exception ex)
             {
@@ -297,7 +299,7 @@ namespace Services.LoginService
                 var apiPath = _configuration["FrontLinks:RestorePassword"] + confirmationToken;
                 var content = await _htmlGeneratorService.RestorePassword(apiPath, user.Language);
                 var title = _configuration.GetSection("RestorePassword")[user.Language.ToString()];
-                await _emailService.SendMail(user.Email, content, title);
+                await _emailService.SendMailAsync(user.Email, content, title);
             }
             catch (Exception ex)
             {
@@ -348,7 +350,7 @@ namespace Services.LoginService
             {
                 var content = await _htmlGeneratorService.PasswordRestored(token.User.Language);
                 var title = _configuration.GetSection("RestorePassword")[token.User.Language.ToString()];
-                await _emailService.SendMail(token.User.Email, content, title);
+                await _emailService.SendMailAsync(token.User.Email, content, title);
             }
             catch (Exception ex)
             {
@@ -473,6 +475,7 @@ namespace Services.LoginService
         //================== FOR TESTS ONLY ========================
         public async Task<List<UserProfile>> GetAllUsers()
         {
+            await _handler.SendMessageToAllAsync("Babak");
             return await _context.Users.Select(u => new UserProfile(u)).ToListAsync();
         }
 

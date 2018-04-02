@@ -36,9 +36,9 @@ namespace Services.AccountService
             _htmlGeneratorService = htmlGeneratorService;
         }
 
-        public async Task<UserProfile> GetUserProfile(int userId) => new UserProfile(await _context.Users.FirstOrDefaultAsync(u => u.Id == userId));       
+        public async Task<UserProfile> GetUserProfileAsync(int userId) => new UserProfile(await _context.Users.FirstOrDefaultAsync(u => u.Id == userId));       
 
-        public async Task<Response<bool>> ChangeNickName(string nickName, int userId)
+        public async Task<Response<bool>> ChangeNickNameAsync(string nickName, int userId)
         {
             _logger.LogDebug($"Changing nickName - {userId}");
             var response = new Response<bool>();
@@ -62,7 +62,7 @@ namespace Services.AccountService
             return response;
         }
 
-        public async Task<Response<bool>> ChangeLanguage(Languages language, int userId)
+        public async Task<Response<bool>> ChangeLanguageAsync(Languages language, int userId)
         {
             _logger.LogDebug($"Changing language - {userId}");
             var response = new Response<bool>();
@@ -80,7 +80,7 @@ namespace Services.AccountService
             return response;
         }
 
-        public async Task<Response<bool>> ChangeSteamId(string steamId, int userId)
+        public async Task<Response<bool>> ChangeSteamIdAsync(string steamId, int userId)
         {
             _logger.LogDebug($"Changing steamId - {userId}");
             var response = new Response<bool>();
@@ -124,7 +124,7 @@ namespace Services.AccountService
             return response;
         }
 
-        public async Task<Response<bool>> ChangePassword(ChangePasswordRequest request, int userId)
+        public async Task<Response<bool>> ChangePasswordAsync(ChangePasswordRequest request, int userId)
         {
             _logger.LogDebug($"Changing password - {userId}");
             var response = new Response<bool>();
@@ -152,7 +152,7 @@ namespace Services.AccountService
             return response;
         }
 
-        public async Task<Response<bool>> ChangeEmail(string email, int userId)
+        public async Task<Response<bool>> ChangeEmailAsync(string email, int userId)
         {
             _logger.LogDebug($"Changing email - {userId}");
             var response = new Response<bool>();
@@ -199,13 +199,13 @@ namespace Services.AccountService
                 var newContent = await _htmlGeneratorService.ConfirmEmail(newApiPath, user.Language);                
 
                 var title = _configuration.GetSection("ConfirmEmail")[user.Language.ToString()];
-                await _emailService.SendMail(email, newContent, title);
+                await _emailService.SendMailAsync(email, newContent, title);
                 
                 if(!IsEmailAbsent)
                 {
                     var oldApiPath = _configuration["FrontLinks:ChangeEmail"] + oldEmailToken.Id;
                     var oldContent = await _htmlGeneratorService.ConfirmEmail(oldApiPath, user.Language);
-                    await _emailService.SendMail(user.Email, oldContent, title);
+                    await _emailService.SendMailAsync(user.Email, oldContent, title);
                 }
             }
             catch (Exception ex)
@@ -220,7 +220,7 @@ namespace Services.AccountService
             return response;
         }
 
-        public async Task<Response<bool>> ChangeEmailConfirm(string confirmationToken)
+        public async Task<Response<bool>> ChangeEmailConfirmAsync(string confirmationToken)
         {
             _logger.LogDebug("Confirming new email");
             var response = new Response<bool>();
@@ -296,7 +296,7 @@ namespace Services.AccountService
             {
                 var content = await _htmlGeneratorService.EmailConfirmed(token.User.Language);
                 var title = _configuration.GetSection("ConfirmEmail")[token.User.Language.ToString()];
-                await _emailService.SendMail(token.User.Email, content, title);
+                await _emailService.SendMailAsync(token.User.Email, content, title);
             }
             catch (Exception ex)
             {
@@ -309,7 +309,7 @@ namespace Services.AccountService
         }
 
         /*Change email to phone number*/
-        public async Task<Response<bool>> ChangeOrAddPhone(string phoneNumber, int userId)
+        public async Task<Response<bool>> ChangeOrAddPhoneAsync(string phoneNumber, int userId)
         {
             _logger.LogDebug($"Changing or adding phone - {userId}");
             var response = new Response<bool>();
@@ -402,7 +402,7 @@ namespace Services.AccountService
         }
 
         /*Change email to phone number*/
-        public async Task<Response<bool>> ChangeOrAddPhoneConfirm(string confirmationToken)
+        public async Task<Response<bool>> ChangeOrAddPhoneConfirmAsync(string confirmationToken)
         {
             _logger.LogDebug("Confirming new phone number");
             var response = new Response<bool>();

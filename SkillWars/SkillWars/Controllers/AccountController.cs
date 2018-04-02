@@ -32,7 +32,7 @@ namespace SkillWars.Controllers
         [HttpGet("UserProfile")]
         public async Task<IActionResult> UserProfile()
         {
-            return Ok(await _accountService.GetUserProfile(Convert.ToInt32(User.Identity.Name)));
+            return Ok(await _accountService.GetUserProfileAsync(Convert.ToInt32(User.Identity.Name)));
         }
 
         /// <summary>
@@ -51,7 +51,7 @@ namespace SkillWars.Controllers
                 return BadRequest(ModelState);
             }
 
-            var response = await _accountService.ChangeNickName(nickName, Convert.ToInt32(User.Identity.Name));
+            var response = await _accountService.ChangeNickNameAsync(nickName, Convert.ToInt32(User.Identity.Name));
             if (response.Error != null)
             {
                 return StatusCode(response.Error.ErrorCode, response.Error);
@@ -75,7 +75,7 @@ namespace SkillWars.Controllers
                 return BadRequest(ModelState);
             }
 
-            var response = await _accountService.ChangeLanguage(language, Convert.ToInt32(User.Identity.Name));
+            var response = await _accountService.ChangeLanguageAsync(language, Convert.ToInt32(User.Identity.Name));
             if (response.Error != null)
             {
                 return StatusCode(response.Error.ErrorCode, response.Error);
@@ -101,7 +101,7 @@ namespace SkillWars.Controllers
                 return BadRequest(ModelState);
             }
 
-            var response = await _accountService.ChangeSteamId(steamId, Convert.ToInt32(User.Identity.Name));
+            var response = await _accountService.ChangeSteamIdAsync(steamId, Convert.ToInt32(User.Identity.Name));
             if (response.Error != null)
             {
                 return StatusCode(response.Error.ErrorCode, response.Error);
@@ -126,7 +126,7 @@ namespace SkillWars.Controllers
                 return BadRequest(ModelState);
             }
 
-            var response = await _accountService.ChangePassword(request, Convert.ToInt32(User.Identity.Name));
+            var response = await _accountService.ChangePasswordAsync(request, Convert.ToInt32(User.Identity.Name));
             if (response.Error != null)
             {
                 return StatusCode(response.Error.ErrorCode, response.Error);
@@ -151,7 +151,7 @@ namespace SkillWars.Controllers
                 return BadRequest(ModelState);
             }
 
-            var response = await _accountService.ChangeEmail(email, Convert.ToInt32(User.Identity.Name));
+            var response = await _accountService.ChangeEmailAsync(email, Convert.ToInt32(User.Identity.Name));
             if (response.Error != null)
             {
                 return StatusCode(response.Error.ErrorCode, response.Error);
@@ -182,7 +182,7 @@ namespace SkillWars.Controllers
                 return BadRequest();
             }
 
-            var response = await _accountService.ChangeEmailConfirm(token);
+            var response = await _accountService.ChangeEmailConfirmAsync(token);
             if (response.Error != null)
             {
                 return StatusCode(response.Error.ErrorCode, response.Error);
@@ -208,7 +208,7 @@ namespace SkillWars.Controllers
             //    return BadRequest(ModelState);
             //}
 
-            var response = await _accountService.ChangeOrAddPhone(phoneNumber, Convert.ToInt32(User.Identity.Name));
+            var response = await _accountService.ChangeOrAddPhoneAsync(phoneNumber, Convert.ToInt32(User.Identity.Name));
             if (response.Error != null)
             {
                 return StatusCode(response.Error.ErrorCode, response.Error);
@@ -239,7 +239,7 @@ namespace SkillWars.Controllers
                 return BadRequest();
             }
 
-            var response = await _accountService.ChangeOrAddPhoneConfirm(token);
+            var response = await _accountService.ChangeOrAddPhoneConfirmAsync(token);
             if (response.Error != null)
             {
                 return StatusCode(response.Error.ErrorCode, response.Error);

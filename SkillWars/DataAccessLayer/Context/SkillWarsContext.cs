@@ -9,5 +9,15 @@ namespace DataAccessLayer.Context
 
         public DbSet<UserEntity> Users { get; set; }
         public DbSet<TokenEntity> Tokens { get; set; }       
+
+        public DbSet<LobbieEntity> Lobbies { get; set; }
+        public DbSet<TeamEntity> Teams { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<TeamEntity>().HasMany(t => t.Users)
+                .WithOne(u => u.Team)
+                .OnDelete(DeleteBehavior.SetNull);
+        }
     }
 }

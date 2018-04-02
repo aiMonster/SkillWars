@@ -13,17 +13,17 @@ using Serilog;
 using Serilog.Events;
 using Serilog.Sinks.Slack;
 using Services.AccountService;
+using Services.LobbieService;
 using Services.LoginService;
 using Services.PaymentService;
 using Services.SendingService;
 using Services.TimeredFunctionsService;
 using SkillWars.Extensions;
-using SkillWars.Handlers.WebSockets;
-using SkillWars.WebSockets;
 using Swashbuckle.AspNetCore.Swagger;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using Services.WebSockets.Handlers;
 
 namespace SkillWars
 {
@@ -96,10 +96,14 @@ namespace SkillWars
             services.AddTransient<IEmailService, EmailService>();
             services.AddTransient<ISmsService, SmsService>();
             services.AddTransient<IAccountService, AccountService>();
+            services.AddTransient<ILobbieService, LobbieService>();
 
 
             services.AddCors();
             services.AddWebSocketManager();
+
+
+
             //services.AddMvc();
             services.AddMvc(options =>
             {
@@ -132,7 +136,7 @@ namespace SkillWars
             };
 
             app.UseWebSockets(wsOptions);
-            app.MapWebSocketManager("/chat", serviceProvider.GetService<ChatRoomHandler>());
+            app.MapWebSocketManager("/lobbie", serviceProvider.GetService<LobbieHandler>());
             app.UseMvc();
         }
 
@@ -155,8 +159,7 @@ namespace SkillWars
                     .WriteTo.Logger(l => l.Filter.ByIncludingOnly(e => e.Level == LogEventLevel.Information)
                         .WriteTo.RollingFile(@"Logs\Info-{Date}.log"))                        
                     .WriteTo.Logger(l => l.Filter.ByIncludingOnly(e => e.Level == LogEventLevel.Debug)
-                        .WriteTo.RollingFile(@"Logs\Debug-{Date}.log"))
-                        .WriteTo.Slack(configuration.GetSection("SlackChannels")["Fatal"])
+                        .WriteTo.RollingFile(@"Logs\Debug-{Date}.log"))                        
                     .WriteTo.Logger(l => l.Filter.ByIncludingOnly(e => e.Level == LogEventLevel.Warning)
                         .WriteTo.RollingFile(@"Logs\Warning-{Date}.log"))
                     .WriteTo.Logger(l => l.Filter.ByIncludingOnly(e => e.Level == LogEventLevel.Error)
@@ -173,14 +176,14 @@ namespace SkillWars
                     .WriteTo.Logger(l => l.Filter.ByIncludingOnly(e => e.Level == LogEventLevel.Information)
                         .WriteTo.RollingFile(@"Logs\Info-{Date}.log"))
                     .WriteTo.Logger(l => l.Filter.ByIncludingOnly(e => e.Level == LogEventLevel.Debug)
-                        .WriteTo.RollingFile(@"Logs\Debug-{Date}.log"))
-                        .WriteTo.Slack(configuration.GetSection("SlackChannels")["Fatal"])
+                        .WriteTo.RollingFile(@"Logs\Debug-{Date}.log"))                        
                     .WriteTo.Logger(l => l.Filter.ByIncludingOnly(e => e.Level == LogEventLevel.Warning)
                         .WriteTo.RollingFile(@"Logs\Warning-{Date}.log"))
                     .WriteTo.Logger(l => l.Filter.ByIncludingOnly(e => e.Level == LogEventLevel.Error)
                         .WriteTo.RollingFile(@"Logs\Error-{Date}.log"))
                     .WriteTo.Logger(l => l.Filter.ByIncludingOnly(e => e.Level == LogEventLevel.Fatal)
-                        .WriteTo.RollingFile(@"Logs\Fatal-{Date}.log"))                   
+                        .WriteTo.RollingFile(@"Logs\Fatal-{Date}.log")
+                        .WriteTo.Slack(configuration.GetSection("SlackChannels")["Fatal"])) 
                     .CreateLogger();
             }
 

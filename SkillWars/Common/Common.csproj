@@ -51,9 +51,13 @@
     <Compile Include="Attributes\LanguageAttribute.cs" />
     <Compile Include="DTO\Account\ChangePasswordRequest.cs" />
     <Compile Include="DTO\Account\ChangingContactsDTO.cs" />
+    <Compile Include="DTO\Account\UserInfo.cs" />
     <Compile Include="DTO\Account\UserProfile.cs" />
     <Compile Include="DTO\Communication\Error.cs" />
     <Compile Include="DTO\Communication\Response.cs" />
+    <Compile Include="DTO\Lobbie\LobbieDTO.cs" />
+    <Compile Include="DTO\Lobbie\LobbieRequest.cs" />
+    <Compile Include="DTO\Lobbie\TeamDTO.cs" />
     <Compile Include="DTO\Login\LoginRequest.cs" />
     <Compile Include="DTO\Login\RegistrationDTO.cs" />
     <Compile Include="DTO\Login\RestorePasswordRequest.cs" />
@@ -62,16 +66,21 @@
     <Compile Include="DTO\Steam\SteamPlayerSummaryDto.cs" />
     <Compile Include="DTO\Steam\SteamPlayerSummaryResponse.cs" />
     <Compile Include="DTO\Steam\SteamPlayerSummaryRootObject.cs" />
+    <Compile Include="Entity\LobbieEntity.cs" />
+    <Compile Include="Entity\TeamEntity.cs" />
     <Compile Include="Entity\TokenEntity.cs" />
     <Compile Include="Entity\UserEntity.cs" />
     <Compile Include="Enums\ConactTypes.cs" />
     <Compile Include="Enums\Languages.cs" />
+    <Compile Include="Enums\LobbieStatusTypes.cs" />
     <Compile Include="Enums\OperationResults.cs" />
     <Compile Include="Enums\Roles.cs" />
+    <Compile Include="Enums\TeamTypes.cs" />
     <Compile Include="Helpers\SkillWarsEncoder.cs" />
     <Compile Include="Interfaces\Services\IAccountService.cs" />
     <Compile Include="Interfaces\Services\IEmailService.cs" />
     <Compile Include="Interfaces\Services\IHtmlGeneratorService.cs" />
+    <Compile Include="Interfaces\Services\ILobbieService.cs" />
     <Compile Include="Interfaces\Services\ILoginService.cs" />
     <Compile Include="Interfaces\Services\IPaymentService.cs" />
     <Compile Include="Interfaces\Services\ISmsService.cs" />
@@ -80,6 +89,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="DTO\Sockets\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

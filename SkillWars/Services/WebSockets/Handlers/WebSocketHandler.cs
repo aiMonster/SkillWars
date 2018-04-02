@@ -1,4 +1,4 @@
-﻿using SkillWars.WebSockets;
+﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,11 +7,12 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace SkillWars.Handlers.WebSockets
+namespace Services.WebSockets.Handlers
 {
     public abstract class WebSocketHandler
     {
         public WebSocketConnectionManager WebSocketConnectionManager { get; set; }
+
 
         public WebSocketHandler(WebSocketConnectionManager webSocketConnectionManager)
         {
@@ -20,15 +21,13 @@ namespace SkillWars.Handlers.WebSockets
 
         public virtual async Task OnConnected(WebSocket socket)
         {
-            HardLogger.logs.Add("Connected new user");
-            Console.WriteLine("Connected new user");
+            //HardLogger.logs.Add("Connected");
             WebSocketConnectionManager.AddSocket(socket);
         }
 
         public virtual async Task OnDisconnected(WebSocket socket)
         {
-            HardLogger.logs.Add("DisConnected new user");
-            Console.WriteLine("Disconnected user");
+            //HardLogger.logs.Add("Disconncected");
             await WebSocketConnectionManager.RemoveSocket(WebSocketConnectionManager.GetId(socket));
         }
 
@@ -55,7 +54,6 @@ namespace SkillWars.Handlers.WebSockets
             {
 
             }
-
         }
 
         public async Task SendMessageToAllAsync(string message)
@@ -65,6 +63,11 @@ namespace SkillWars.Handlers.WebSockets
                 if (pair.Value.State == WebSocketState.Open)
                     await SendMessageAsync(pair.Value, message);
             }
+        }
+
+        public async Task SendMessageToAllAsync(object obj)
+        {
+            await SendMessageToAllAsync(JsonConvert.SerializeObject(obj));
         }
 
         public abstract Task ReceiveAsync(WebSocket socket, WebSocketReceiveResult result, byte[] buffer);

@@ -24,7 +24,7 @@ namespace Services.SendingService
         {
             foreach(var phone in phoneNumbers)
             {
-                await _emailService.SendMail(phone, message, "It is Sms");
+                await _emailService.SendMailAsync(phone, message, "It is Sms");
             }
             
         }

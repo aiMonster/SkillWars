@@ -1,14 +1,17 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using Common.Interfaces.Services;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
-using SkillWars.Handlers.WebSockets;
+using Services.WebSockets;
+using Services.WebSockets.Handlers;
+using SkillWars.WebSockets.Handlers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 
-namespace SkillWars.WebSockets
+namespace SkillWars.Extensions
 {
     public static class WebSocketExtensions
     {
@@ -21,13 +24,17 @@ namespace SkillWars.WebSockets
         {
             services.AddTransient<WebSocketConnectionManager>();
 
-            foreach (var type in Assembly.GetEntryAssembly().ExportedTypes)
-            {
-                if (type.GetTypeInfo().BaseType == typeof(WebSocketHandler))
-                {
-                    services.AddSingleton(type);
-                }
-            }
+
+            //services.AddSingleton<WebSocketHandler>();
+            services.AddSingleton<LobbieHandler>();            
+           
+            //foreach (var type in Assembly.GetEntryAssembly().ExportedTypes)
+            //{
+            //    if (type.GetTypeInfo().BaseType == typeof(WebSocketHandler))
+            //    {
+            //        services.AddSingleton(type);
+            //    }
+            //}
 
             return services;
         }

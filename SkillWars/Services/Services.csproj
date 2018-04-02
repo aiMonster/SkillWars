@@ -122,6 +122,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AccountService\AccountService.cs" />
+    <Compile Include="LobbieService\LobbieService.cs" />
     <Compile Include="LoginService\AuthOptions.cs" />
     <Compile Include="LoginService\LoginService.cs" />
     <Compile Include="PaymentService\PaymentService.cs" />
@@ -130,6 +131,9 @@
     <Compile Include="SendingService\HtmlGeneratorService.cs" />
     <Compile Include="SendingService\SmsService.cs" />
     <Compile Include="TimeredFunctionsService\TimeredFunctionsService.cs" />
+    <Compile Include="WebSockets\Handlers\LobbieHandler.cs" />
+    <Compile Include="WebSockets\Handlers\WebSocketHandler.cs" />
+    <Compile Include="WebSockets\WebSocketConnectionManager.cs" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

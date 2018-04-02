@@ -11,14 +11,14 @@ namespace Common.Interfaces.Services
 {
     public interface IAccountService
     {
-        Task<UserProfile> GetUserProfile(int userId);
-        Task<Response<bool>> ChangeNickName(string nickName, int userId);
-        Task<Response<bool>> ChangeLanguage(Languages language, int userId);
-        Task<Response<bool>> ChangeSteamId(string steamId, int userId);
-        Task<Response<bool>> ChangePassword(ChangePasswordRequest request, int userId);
-        Task<Response<bool>> ChangeEmail(string email, int userId);
-        Task<Response<bool>> ChangeEmailConfirm(string confirmaitonToken);
-        Task<Response<bool>> ChangeOrAddPhone(string phoneNumber, int userId);
-        Task<Response<bool>> ChangeOrAddPhoneConfirm(string confirmationToken);
+        Task<UserProfile> GetUserProfileAsync(int userId);
+        Task<Response<bool>> ChangeNickNameAsync(string nickName, int userId);
+        Task<Response<bool>> ChangeLanguageAsync(Languages language, int userId);
+        Task<Response<bool>> ChangeSteamIdAsync(string steamId, int userId);
+        Task<Response<bool>> ChangePasswordAsync(ChangePasswordRequest request, int userId);
+        Task<Response<bool>> ChangeEmailAsync(string email, int userId);
+        Task<Response<bool>> ChangeEmailConfirmAsync(string confirmaitonToken);
+        Task<Response<bool>> ChangeOrAddPhoneAsync(string phoneNumber, int userId);
+        Task<Response<bool>> ChangeOrAddPhoneConfirmAsync(string confirmationToken);
     }
 }
