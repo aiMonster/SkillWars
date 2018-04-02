@@ -15,11 +15,13 @@ namespace Services.TimeredFunctionsService
     {
         private readonly ILogger _logger;
         private readonly SkillWarsContext _context;
+        private readonly ILobbieService _lobbieService;
 
-        public TimeredFunctionsService(ILoggerFactory loggerFactory, SkillWarsContext context)
+        public TimeredFunctionsService(ILoggerFactory loggerFactory, SkillWarsContext context, ILobbieService lobbieService)
         {
             _logger = loggerFactory.CreateLogger<TimeredFunctionsService>();
             _context = context;
+            _lobbieService = lobbieService;
         }
 
         private Timer GetConfiguredTimer(int secondInterval, Func<Task> elapsedFunction)
@@ -39,7 +41,7 @@ namespace Services.TimeredFunctionsService
         {
             Timer timer = new Timer()
             {
-                Interval = 1000 * 60 * 60,// 1000ms * 60 * 60 = 60min
+                Interval = 1000 * 60,// 1000ms * 60 = 60sec
                 Enabled = true,
                 AutoReset = true
             };
@@ -55,19 +57,17 @@ namespace Services.TimeredFunctionsService
             _logger.LogInformation("Timered Functions Service started");
             var now = DateTime.UtcNow;
 
-            //once a month
-            if (now.Day == 1 && now.Hour < 1)
+            if (now.Hour < 1) //once a day
+            {
+                await CheckEndsTokenExpirates();
+            }           
+            else if (now.Day == 1 && now.Hour < 1) //once a month
             {
                 
             }
 
-            //once a day
-            if(now.Hour < 1)
-            {
-                await CheckEndsTokenExpirates();
-            }
-
-            //every hour
+            //every minute
+            await _lobbieService.CheckLobbies();
 
 
             _logger.LogInformation("Timered Functions Service stopped");
@@ -80,7 +80,5 @@ namespace Services.TimeredFunctionsService
             _context.Tokens.RemoveRange(oldTokens);
             await _context.SaveChangesAsync();
         }
-
-
     }
 }

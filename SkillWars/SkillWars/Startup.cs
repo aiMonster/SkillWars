@@ -102,8 +102,6 @@ namespace SkillWars
             services.AddCors();
             services.AddWebSocketManager();
 
-
-
             //services.AddMvc();
             services.AddMvc(options =>
             {

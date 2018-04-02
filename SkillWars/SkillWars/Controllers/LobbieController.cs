@@ -2,7 +2,6 @@
 using Common.Interfaces.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using SkillWars.WebSockets.Handlers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,16 +9,15 @@ using System.Threading.Tasks;
 
 namespace SkillWars.Controllers
 {
-    [Authorize]
+    [Authorize(Roles ="User")]
     [Route("api/[controller]")]
     public class LobbieController : Controller
     {
         private readonly ILobbieService _lobbieService;
-        //private readonly ChatRoomHandler _socketHandler;
-        public LobbieController(ILobbieService lobbieService)//, ChatRoomHandler socketHandler)
+       
+        public LobbieController(ILobbieService lobbieService)
         {
             _lobbieService = lobbieService;
-            //_socketHandler = socketHandler;
         }
 
         [HttpPost]
@@ -35,8 +33,6 @@ namespace SkillWars.Controllers
             {
                 return StatusCode(response.Error.ErrorCode, response.Error);
             }
-
-            //send notification that new lobbie were created
 
             return Ok(response.Data);
         }
@@ -55,8 +51,24 @@ namespace SkillWars.Controllers
             {
                 return StatusCode(response.Error.ErrorCode, response.Error);
             }
+           
+            return Ok(response.Data);
+        }
 
-            //await _socketHandler.SendMessageToAllAsync("fuck, it works");
+        [HttpPut("Participate")]
+        public async Task<IActionResult> Participate([FromBody] ParticipatingRequest request)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var response = await _lobbieService.ParticipateLobbieAsync(request, Convert.ToInt32(User.Identity.Name));
+            if (response.Error != null)
+            {
+                return StatusCode(response.Error.ErrorCode, response.Error);
+            }
+
             return Ok(response.Data);
         }
 

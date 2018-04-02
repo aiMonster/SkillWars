@@ -57,12 +57,15 @@
     <Compile Include="DTO\Communication\Response.cs" />
     <Compile Include="DTO\Lobbie\LobbieDTO.cs" />
     <Compile Include="DTO\Lobbie\LobbieRequest.cs" />
+    <Compile Include="DTO\Lobbie\ParticipatingRequest.cs" />
+    <Compile Include="DTO\Lobbie\TeamChangedSRequest.cs" />
     <Compile Include="DTO\Lobbie\TeamDTO.cs" />
     <Compile Include="DTO\Login\LoginRequest.cs" />
     <Compile Include="DTO\Login\RegistrationDTO.cs" />
     <Compile Include="DTO\Login\RestorePasswordRequest.cs" />
     <Compile Include="DTO\Login\SteamRegistrationDTO.cs" />
     <Compile Include="DTO\Login\TokenResponse.cs" />
+    <Compile Include="DTO\Sockets\SocketMessage.cs" />
     <Compile Include="DTO\Steam\SteamPlayerSummaryDto.cs" />
     <Compile Include="DTO\Steam\SteamPlayerSummaryResponse.cs" />
     <Compile Include="DTO\Steam\SteamPlayerSummaryRootObject.cs" />
@@ -73,6 +76,7 @@
     <Compile Include="Enums\ConactTypes.cs" />
     <Compile Include="Enums\Languages.cs" />
     <Compile Include="Enums\LobbieStatusTypes.cs" />
+    <Compile Include="Enums\NotificationTypes.cs" />
     <Compile Include="Enums\OperationResults.cs" />
     <Compile Include="Enums\Roles.cs" />
     <Compile Include="Enums\TeamTypes.cs" />
@@ -90,8 +94,6 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="DTO\Sockets\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Services.WebSockets;
 using Services.WebSockets.Handlers;
-using SkillWars.WebSockets.Handlers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
