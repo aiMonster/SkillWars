@@ -7,6 +7,7 @@ namespace Common.Enums
         LobbieRemoved,
         UserParticipated,
         UserLeaved,
-        LobbieStarted
+        LobbieStarted,
+        GameStarted
     }
 }

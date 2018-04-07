@@ -12,6 +12,14 @@
             <response code="500">Internal error on server</response>        
             <response code="200">Success</response>
         </member>
+        <member name="M:SkillWars.Controllers.AccountController.Notifications">
+            <summary>
+            Get user notifications
+            </summary>
+            <returns></returns>
+            <response code="500">Internal error on server</response>        
+            <response code="200">Success</response>
+        </member>
         <member name="M:SkillWars.Controllers.AccountController.ChangeNickName(System.String)">
             <summary>
             Change NickName

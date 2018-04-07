@@ -2,6 +2,7 @@
 using Common.Enums;
 using Common.Helpers;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -33,6 +34,7 @@ namespace Common.Entity
 
         public int? TeamId { get; set; }
         public TeamEntity Team { get; set; }
+        public List<UserNotificationsEntity> Notifications { get; set; } = new List<UserNotificationsEntity>();
 
         public UserEntity() { }
 

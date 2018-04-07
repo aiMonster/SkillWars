@@ -162,28 +162,23 @@ namespace Services.LobbieService
 
             if (lobbie.Teams[0].Users.Count + lobbie.Teams[1].Users.Count == lobbie.AmountPlayers)
             {
-                await StartGame(lobbie.Id);
+                await StartGameAsync(lobbie.Id);
             }
 
             return response;
         }
-
-
+        
         public async Task<List<LobbieDTO>> GetAllLobbiesAsync()
         {
             return await _context.Lobbies.AsNoTracking().Include(l => l.Teams).ThenInclude(t => t.Users).Select(l => new LobbieDTO(l)).ToListAsync();
         }
 
-
-
-        public async Task CheckLobbies()
-        {
-            
+        public async Task CheckLobbiesAsync()
+        {            
             var toUpdate = await _context.Lobbies.Where(l => l.StartingTime <= DateTime.UtcNow && l.Status == LobbieStatusTypes.Expecting)
                                                  .Include(l => l.Teams)
                                                     .ThenInclude(t => t.Users)
                                                  .ToListAsync();
-            
 
             foreach(var lobbie in toUpdate)
             {                
@@ -194,18 +189,41 @@ namespace Services.LobbieService
                     await _socketHandler.SendMessageToAllAsync(new SocketMessage<int>(lobbie.Id, NotificationTypes.LobbieRemoved));
                 }
                 else
-                {
-                    lobbie.Status = LobbieStatusTypes.Started;
-                    await _context.SaveChangesAsync();
-
-                    await StartGame(lobbie.Id);                    
+                {                    
+                    await StartGameAsync(lobbie.Id);                    
                 }                
             }
         }
 
-        private async Task StartGame(int lobbieId)
+        private async Task StartGameAsync(int lobbieId)
         {
+            //notifications for all users
             await _socketHandler.SendMessageToAllAsync(new SocketMessage<int>(lobbieId, NotificationTypes.LobbieStarted));
+            var lobbie = await _context.Lobbies.Where(l => l.Id == lobbieId)
+                                         .Include(l => l.Teams)
+                                             .ThenInclude(t=> t.Users)
+                                         .FirstOrDefaultAsync();
+
+            lobbie.Status = LobbieStatusTypes.Started;            
+
+            //Notification only for participants
+            var notification = new NotificationEntity()
+            {                
+                Time = DateTime.UtcNow,
+                Text = "Here is info about started server for lobbie with id - " + lobbie.Id                
+            };
+            await _context.Notifications.AddAsync(notification);
+            await _context.SaveChangesAsync();
+
+            foreach(var team in lobbie.Teams)
+            {
+                foreach(var user in team.Users)
+                {
+                    user.Notifications.Add(new UserNotificationsEntity() { NotificationId = notification.Id, UserId = user.Id });
+                    await _socketHandler.SendMessageByUserId(user.Id, new SocketMessage<NotificationDTO>(new NotificationDTO(notification), NotificationTypes.GameStarted)); 
+                }
+            }
+            await _context.SaveChangesAsync();                  
         }
 
         //================== FOR TESTS ONLY ========================        

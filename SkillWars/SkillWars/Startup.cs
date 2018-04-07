@@ -24,6 +24,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using Services.WebSockets.Handlers;
+using Common.DTO.Sockets;
+using Newtonsoft.Json;
 
 namespace SkillWars
 {
@@ -43,7 +45,7 @@ namespace SkillWars
         public IConfigurationRoot Configuration { get; }        
         
         public IServiceProvider ConfigureServices(IServiceCollection services)
-        {
+        {            
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                .AddJwtBearer(options =>
                {

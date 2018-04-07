@@ -470,7 +470,6 @@ namespace Services.LoginService
             return response;
         }
 
-
         //================== FOR TESTS ONLY ========================
         public async Task<List<UserProfile>> GetAllUsers()
         {            

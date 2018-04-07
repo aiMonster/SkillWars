@@ -11,7 +11,7 @@ namespace Common.Interfaces.Services
         Task<Response<bool>> LeaveLobbieAsync(int userId);
         Task<List<LobbieDTO>> GetAllLobbiesAsync();
         Task<Response<bool>> ParticipateLobbieAsync(ParticipatingRequest request, int userId);
-        Task CheckLobbies();
+        Task CheckLobbiesAsync();
 
         Task<Response<bool>> RemoveLobbieById(int lobbieId);
     }

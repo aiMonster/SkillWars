@@ -57,17 +57,19 @@ namespace Services.TimeredFunctionsService
             _logger.LogInformation("Timered Functions Service started");
             var now = DateTime.UtcNow;
 
-            if (now.Hour < 1) //once a day
+            if (now.Hour < 1 && now.Minute < 1) //once a day
             {
                 await CheckEndsTokenExpirates();
+                await RemoveNotConfirmedAccounts();
+                await RemoveOldNotifications();
             }           
-            else if (now.Day == 1 && now.Hour < 1) //once a month
+            else if (now.Day == 1) //once a month
             {
                 
             }
 
             //every minute
-            await _lobbieService.CheckLobbies();
+            await _lobbieService.CheckLobbiesAsync();
 
 
             _logger.LogInformation("Timered Functions Service stopped");
@@ -78,6 +80,27 @@ namespace Services.TimeredFunctionsService
             var now = DateTime.UtcNow;
             var oldTokens = await _context.Tokens.Where(p => p.ExpirationDate < now).ToListAsync();
             _context.Tokens.RemoveRange(oldTokens);
+            await _context.SaveChangesAsync();
+        }
+
+        
+        private async Task RemoveNotConfirmedAccounts()
+        {
+            var now = DateTime.UtcNow;
+            var profilesToRemove = await _context.Users
+                                                 .Where(u => u.IsEmailConfirmed == false && !String.IsNullOrEmpty(u.Email) && u.RegistrationDate.AddDays(7) < now)
+                                                 .ToListAsync();
+            _context.Users.RemoveRange(profilesToRemove);
+            await _context.SaveChangesAsync();
+        }
+
+        private async Task RemoveOldNotifications()
+        {
+            var now = DateTime.UtcNow;
+            var notificationsToRemove = await _context.Notifications
+                                                      .Where(n => n.Time.AddDays(1) < now)
+                                                      .ToListAsync();
+            _context.Notifications.RemoveRange(notificationsToRemove);
             await _context.SaveChangesAsync();
         }
     }

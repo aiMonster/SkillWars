@@ -36,6 +36,18 @@ namespace SkillWars.Controllers
         }
 
         /// <summary>
+        /// Get user notifications
+        /// </summary>
+        /// <returns></returns>
+        /// <response code="500">Internal error on server</response>        
+        /// <response code="200">Success</response>
+        [HttpGet("Notifications")]
+        public async Task<IActionResult> Notifications()
+        {
+            return Ok(await _accountService.GetNotificationsAsync(Convert.ToInt32(User.Identity.Name)));
+        }
+
+        /// <summary>
         /// Change NickName
         /// </summary>
         /// <returns></returns>
