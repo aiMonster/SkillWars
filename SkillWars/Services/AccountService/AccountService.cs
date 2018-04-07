@@ -46,7 +46,7 @@ namespace Services.AccountService
                                                     .Include(u => u.Notifications)
                                                         .ThenInclude(n => n.Notification)                                                      
                                                     .FirstOrDefaultAsync();
-            return user.Notifications.Select(n => new NotificationDTO(n.Notification)).ToList();
+            return user.Notifications.Select(n => new NotificationDTO(n.Notification)).OrderByDescending(n => n.Time).ToList();
         }
 
         public async Task<Response<bool>> ChangeNickNameAsync(string nickName, int userId)

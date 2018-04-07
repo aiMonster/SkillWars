@@ -63,7 +63,7 @@ namespace Services.WebSockets.Handlers
                 var request = JsonConvert.DeserializeObject<LogInRequest>(message);
                 AddSession(socket, request.UserId);
             }
-            await SendMessageToAllAsync(message);
+            //await SendMessageToAllAsync(message);
         }
 
         private void AddSession(WebSocket socket, int userId)
