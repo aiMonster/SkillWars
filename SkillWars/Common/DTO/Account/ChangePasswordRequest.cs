@@ -6,8 +6,7 @@ using System.ComponentModel.DataAnnotations;
 namespace Common.DTO.Account
 {
     public class ChangePasswordRequest
-    {
-        [Required] 
+    {        
         [ChangePassword("Password")]
         public string OldPassword { get; set; }
 

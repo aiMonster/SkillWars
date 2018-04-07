@@ -222,6 +222,7 @@ namespace Services.LoginService
                 await _context.SaveChangesAsync();               
             }           
 
+            user = await _context.Users.AsNoTracking().FirstOrDefaultAsync(p => p.SteamId == steamId);
             var claims = new List<Claim>
             {
                 new Claim(ClaimsIdentity.DefaultNameClaimType, user.Id.ToString()),
