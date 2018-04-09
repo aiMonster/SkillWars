@@ -8,6 +8,9 @@ namespace Common.Enums
         UserParticipated,
         UserLeaved,
         LobbieStarted,
-        GameStarted
+        GameStarted,
+        SuggestionAccepted,
+        SuggestionDeclined,
+        SuggestionDone
     }
 }

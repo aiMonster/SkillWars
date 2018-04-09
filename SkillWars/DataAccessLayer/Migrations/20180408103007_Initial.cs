@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace DataAccessLayer.Migrations
 {
-    public partial class NotificationsMigration : Migration
+    public partial class Initial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -94,6 +94,37 @@ namespace DataAccessLayer.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Suggestions",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    Category = table.Column<int>(nullable: false),
+                    CreationTime = table.Column<DateTime>(nullable: false),
+                    Deadline = table.Column<DateTime>(nullable: false),
+                    Description = table.Column<string>(nullable: true),
+                    Earned = table.Column<int>(nullable: false),
+                    IsConfirmed = table.Column<bool>(nullable: false),
+                    IsDone = table.Column<bool>(nullable: false),
+                    Price = table.Column<int>(nullable: false),
+                    Priority = table.Column<int>(nullable: false),
+                    ProgressPercents = table.Column<int>(nullable: false),
+                    PublishingTime = table.Column<DateTime>(nullable: false),
+                    Title = table.Column<string>(nullable: true),
+                    UserId = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Suggestions", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Suggestions_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Tokens",
                 columns: table => new
                 {
@@ -138,6 +169,11 @@ namespace DataAccessLayer.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_Suggestions_UserId",
+                table: "Suggestions",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Teams_LobbieId",
                 table: "Teams",
                 column: "LobbieId");
@@ -160,6 +196,9 @@ namespace DataAccessLayer.Migrations
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "Suggestions");
+
             migrationBuilder.DropTable(
                 name: "Tokens");
 

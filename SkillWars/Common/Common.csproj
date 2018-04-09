@@ -72,8 +72,12 @@
     <Compile Include="DTO\Steam\SteamPlayerSummaryDto.cs" />
     <Compile Include="DTO\Steam\SteamPlayerSummaryResponse.cs" />
     <Compile Include="DTO\Steam\SteamPlayerSummaryRootObject.cs" />
+    <Compile Include="DTO\Suggestion\ConfirmSuggestionRequest.cs" />
+    <Compile Include="DTO\Suggestion\SuggestionDTO.cs" />
+    <Compile Include="DTO\Suggestion\SuggestionRequest.cs" />
     <Compile Include="Entity\LobbieEntity.cs" />
     <Compile Include="Entity\NotificationEntity.cs" />
+    <Compile Include="Entity\SuggestionEntity.cs" />
     <Compile Include="Entity\TeamEntity.cs" />
     <Compile Include="Entity\TokenEntity.cs" />
     <Compile Include="Entity\UserEntity.cs" />
@@ -83,7 +87,9 @@
     <Compile Include="Enums\LobbieStatusTypes.cs" />
     <Compile Include="Enums\NotificationTypes.cs" />
     <Compile Include="Enums\OperationResults.cs" />
+    <Compile Include="Enums\PriorityTypes.cs" />
     <Compile Include="Enums\Roles.cs" />
+    <Compile Include="Enums\SuggestionCategroryTypes.cs" />
     <Compile Include="Enums\SocketRequestTypes.cs" />
     <Compile Include="Enums\TeamTypes.cs" />
     <Compile Include="Helpers\SkillWarsEncoder.cs" />
@@ -94,6 +100,7 @@
     <Compile Include="Interfaces\Services\ILoginService.cs" />
     <Compile Include="Interfaces\Services\IPaymentService.cs" />
     <Compile Include="Interfaces\Services\ISmsService.cs" />
+    <Compile Include="Interfaces\Services\ISuggestionService.cs" />
     <Compile Include="Interfaces\Services\ITimeredFunctionsService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

@@ -9,6 +9,7 @@ namespace DataAccessLayer.Context
 
         public DbSet<UserEntity> Users { get; set; }
         public DbSet<NotificationEntity> Notifications { get; set; }
+        public DbSet<SuggestionEntity> Suggestions { get; set; }
         public DbSet<TokenEntity> Tokens { get; set; }       
 
         public DbSet<LobbieEntity> Lobbies { get; set; }

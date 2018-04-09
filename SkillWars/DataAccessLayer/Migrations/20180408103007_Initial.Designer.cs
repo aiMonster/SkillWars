@@ -12,8 +12,8 @@ using System;
 namespace DataAccessLayer.Migrations
 {
     [DbContext(typeof(SkillWarsContext))]
-    [Migration("20180407181238_NotificationsMigration")]
-    partial class NotificationsMigration
+    [Migration("20180408103007_Initial")]
+    partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -58,6 +58,44 @@ namespace DataAccessLayer.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Notifications");
+                });
+
+            modelBuilder.Entity("Common.Entity.SuggestionEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<int>("Category");
+
+                    b.Property<DateTime>("CreationTime");
+
+                    b.Property<DateTime>("Deadline");
+
+                    b.Property<string>("Description");
+
+                    b.Property<int>("Earned");
+
+                    b.Property<bool>("IsConfirmed");
+
+                    b.Property<bool>("IsDone");
+
+                    b.Property<int>("Price");
+
+                    b.Property<int>("Priority");
+
+                    b.Property<int>("ProgressPercents");
+
+                    b.Property<DateTime>("PublishingTime");
+
+                    b.Property<string>("Title");
+
+                    b.Property<int>("UserId");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Suggestions");
                 });
 
             modelBuilder.Entity("Common.Entity.TeamEntity", b =>
@@ -143,6 +181,14 @@ namespace DataAccessLayer.Migrations
                     b.HasIndex("NotificationId");
 
                     b.ToTable("UserNotificationsEntity");
+                });
+
+            modelBuilder.Entity("Common.Entity.SuggestionEntity", b =>
+                {
+                    b.HasOne("Common.Entity.UserEntity", "User")
+                        .WithMany("Suggestions")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("Common.Entity.TeamEntity", b =>

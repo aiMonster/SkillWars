@@ -26,6 +26,7 @@ using System.IO;
 using Services.WebSockets.Handlers;
 using Common.DTO.Sockets;
 using Newtonsoft.Json;
+using Services.SuggestionService;
 
 namespace SkillWars
 {
@@ -36,8 +37,8 @@ namespace SkillWars
             var builder = new ConfigurationBuilder()
                 .SetBasePath(env.ContentRootPath)
                 .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-                .AddJsonFile("EmailSubjects.json", optional: true)
-                .AddJsonFile("PhoneSms.json", optional: true);
+                .AddJsonFile("LocalizationFiles/EmailSubjects.json", optional: true)
+                .AddJsonFile("LocalizationFiles/PhoneSms.json", optional: true);
                 //.AddEnvironmentVariables();
             Configuration = builder.Build();            
         }        
@@ -99,6 +100,7 @@ namespace SkillWars
             services.AddTransient<ISmsService, SmsService>();
             services.AddTransient<IAccountService, AccountService>();
             services.AddTransient<ILobbieService, LobbieService>();
+            services.AddTransient<ISuggestionService, SuggestionService>();
 
 
             services.AddCors();

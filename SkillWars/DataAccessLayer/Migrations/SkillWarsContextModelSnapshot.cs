@@ -59,6 +59,44 @@ namespace DataAccessLayer.Migrations
                     b.ToTable("Notifications");
                 });
 
+            modelBuilder.Entity("Common.Entity.SuggestionEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<int>("Category");
+
+                    b.Property<DateTime>("CreationTime");
+
+                    b.Property<DateTime>("Deadline");
+
+                    b.Property<string>("Description");
+
+                    b.Property<int>("Earned");
+
+                    b.Property<bool>("IsConfirmed");
+
+                    b.Property<bool>("IsDone");
+
+                    b.Property<int>("Price");
+
+                    b.Property<int>("Priority");
+
+                    b.Property<int>("ProgressPercents");
+
+                    b.Property<DateTime>("PublishingTime");
+
+                    b.Property<string>("Title");
+
+                    b.Property<int>("UserId");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Suggestions");
+                });
+
             modelBuilder.Entity("Common.Entity.TeamEntity", b =>
                 {
                     b.Property<int>("Id")
@@ -142,6 +180,14 @@ namespace DataAccessLayer.Migrations
                     b.HasIndex("NotificationId");
 
                     b.ToTable("UserNotificationsEntity");
+                });
+
+            modelBuilder.Entity("Common.Entity.SuggestionEntity", b =>
+                {
+                    b.HasOne("Common.Entity.UserEntity", "User")
+                        .WithMany("Suggestions")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("Common.Entity.TeamEntity", b =>

@@ -130,6 +130,7 @@
     <Compile Include="SendingService\EmailService.cs" />
     <Compile Include="SendingService\HtmlGeneratorService.cs" />
     <Compile Include="SendingService\SmsService.cs" />
+    <Compile Include="SuggestionService\SuggestionService.cs" />
     <Compile Include="TimeredFunctionsService\TimeredFunctionsService.cs" />
     <Compile Include="WebSockets\Handlers\LobbieHandler.cs" />
     <Compile Include="WebSockets\Handlers\WebSocketHandler.cs" />
