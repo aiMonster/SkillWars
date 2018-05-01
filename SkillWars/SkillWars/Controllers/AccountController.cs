@@ -215,10 +215,10 @@ namespace SkillWars.Controllers
         [HttpPut("PhoneNumber")]
         public async Task<IActionResult> ChangePhoneNumber([FromBody]string phoneNumber)
         {
-            //if (!new EmailAddressAttribute().IsValid(email))
-            //{
-            //    return BadRequest(ModelState);
-            //}
+            if (String.IsNullOrEmpty(phoneNumber))
+            {
+                return BadRequest(ModelState);
+            }
 
             var response = await _accountService.ChangeOrAddPhoneAsync(phoneNumber, Convert.ToInt32(User.Identity.Name));
             if (response.Error != null)

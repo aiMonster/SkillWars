@@ -55,6 +55,18 @@ namespace SkillWars.Controllers
             return Ok(await _lobbieService.GetAllLobbiesAsync());
         }
 
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetLobbieById([FromRoute] int id)
+        {
+            var response = await _lobbieService.GetLobbieByIdAsync(id);
+            if (response.Error != null)
+            {
+                return StatusCode(response.Error.ErrorCode, response.Error);
+            }
+
+            return Ok(response.Data);
+        }
+
         /// <summary>
         /// Leave lobbie
         /// </summary>

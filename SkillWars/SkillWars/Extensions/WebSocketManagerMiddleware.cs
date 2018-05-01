@@ -1,5 +1,6 @@
 ﻿using Common.Interfaces.Services;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 using Services.WebSockets.Handlers;
 using System;
 using System.Net.WebSockets;
@@ -10,13 +11,15 @@ namespace SkillWars.Extensions
 {
     public class WebSocketManagerMiddleware
     {
+        private readonly ILogger _logger;
         private readonly RequestDelegate _next;
         private WebSocketHandler _webSocketHandler { get; set; }
 
-        public WebSocketManagerMiddleware(RequestDelegate next, WebSocketHandler webSocketHandler)
+        public WebSocketManagerMiddleware(RequestDelegate next, WebSocketHandler webSocketHandler, ILoggerFactory loggerFactory)
         {
             _next = next;
             _webSocketHandler = webSocketHandler;
+            _logger = loggerFactory.CreateLogger<WebSocketManagerMiddleware>();
         }
 
         public async Task Invoke(HttpContext context)
@@ -26,10 +29,12 @@ namespace SkillWars.Extensions
 
             var socket = await context.WebSockets.AcceptWebSocketAsync();
 
+            //_logger.LogError("New socket request");
             await _webSocketHandler.OnConnected(socket);
 
             await Receive(socket, async (result, buffer) =>
             {
+                //_logger.LogError("Something received - " + result.MessageType);
                 if (result.MessageType == WebSocketMessageType.Text)
                 {
                     await _webSocketHandler.ReceiveAsync(socket, result, buffer);

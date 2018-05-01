@@ -173,6 +173,26 @@ namespace Services.LobbieService
             return await _context.Lobbies.AsNoTracking().Include(l => l.Teams).ThenInclude(t => t.Users).Select(l => new LobbieDTO(l)).ToListAsync();
         }
 
+        public async Task<Response<LobbieDTO>> GetLobbieByIdAsync(int id)
+        {
+            var response = new Response<LobbieDTO>();
+
+            var lobbie = await _context.Lobbies.Where(l => l.Id == id)
+                                               .AsNoTracking()
+                                               .Include(l => l.Teams)
+                                               .ThenInclude(t => t.Users)
+                                               .Select(l => new LobbieDTO(l))
+                                               .FirstOrDefaultAsync();
+
+            if(lobbie == null)
+            {
+                response.Error = new Error(404, "Lobbie not found");
+                return response;
+            }
+            response.Data = lobbie;
+            return response;            
+        }
+
         public async Task CheckLobbiesAsync()
         {            
             var toUpdate = await _context.Lobbies.Where(l => l.StartingTime <= DateTime.UtcNow && l.Status == LobbieStatusTypes.Expecting)

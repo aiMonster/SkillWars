@@ -50,20 +50,34 @@ namespace Services.WebSockets.Handlers
 
         public override async Task ReceiveAsync(WebSocket socket, WebSocketReceiveResult result, byte[] buffer)
         {
+
             string message = Encoding.UTF8.GetString(buffer, 0, result.Count);
+            await SendMessageToAllAsync(message);
 
-            var baseMessage = JsonConvert.DeserializeObject<BaseMessage>(message);
-            if (baseMessage == null)
-            {                
-                return;
-            }
-
-            if(baseMessage.Type == SocketRequestTypes.LogInRequest)
+            try
             {
-                var request = JsonConvert.DeserializeObject<LogInRequest>(message);
-                AddSession(socket, request.UserId);
+                var baseMessage = JsonConvert.DeserializeObject<BaseMessage>(message);
+                if (baseMessage == null)
+                {
+                    return;
+                }
+
+                if (baseMessage.Type == SocketRequestTypes.LogInRequest)
+                {
+                    var request = JsonConvert.DeserializeObject<LogInRequest>(message);
+                    AddSession(socket, request.UserId);
+                }
+
+                await SendMessageToAllAsync(message);
             }
-            //await SendMessageToAllAsync(message);
+            catch
+            {
+                await SendMessageToAllAsync("Zaibav spam vidpravlati");
+            }
+
+            
+
+            
         }
 
         private void AddSession(WebSocket socket, int userId)
