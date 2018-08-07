@@ -26,11 +26,7 @@ namespace Services.PaymentService
         }
 
         public async Task NewTransaction(List<KeyValuePair<string, StringValues>> query)
-        {
-            _logger.LogError("Fuck! We have got something");
-            return;
-
-
+        {            
             _logger.LogDebug("New transaction");
             string _securityKey = _configuration.GetSection("Interkassa")["securityKey"];
             string _ik_co_id = _configuration.GetSection("Interkassa")["ik_co_id"];

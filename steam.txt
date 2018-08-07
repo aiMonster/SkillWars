@@ -1,0 +1,8 @@
+userId - 76561198454392387
+Steam apiKey - 2A7BD196118B0A8438937D400A2FDB45
+http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key={_steamOptions.ApiKey}&steamids={userId}
+04/29/2018 - 14:01:56.014 - "Doub1e<782><STEAM_1:0:1200700721><CT>" threw molotov [-1094 1166 -62]
+04/29/2018 - 14:01:55.603 - "Tor4ok_play<938><STEAM_1:0:1617770234><Unassigned>" triggered "clantag" (value "")
+04/29/2018 - 14:01:54.986 - "Âëàäåëåö<936><STEAM_1:0:1905115210>" switched from team <Unassigned> to <CT>
+
+05/01/2018 - 20:05:21: "ÔÁĞ XJIEÁYIIIEK (RUS)<516><STEAM_1:0:1437230605><TERRORIST>" say "ÿùèê"

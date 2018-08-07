@@ -56,6 +56,7 @@
     <Compile Include="DTO\Account\UserProfile.cs" />
     <Compile Include="DTO\Communication\Error.cs" />
     <Compile Include="DTO\Communication\Response.cs" />
+    <Compile Include="DTO\DownloadedFileDTO.cs" />
     <Compile Include="DTO\Lobbie\LobbieDTO.cs" />
     <Compile Include="DTO\Lobbie\LobbieRequest.cs" />
     <Compile Include="DTO\Lobbie\ParticipatingRequest.cs" />
@@ -89,7 +90,9 @@
     <Compile Include="Helpers\SkillWarsEncoder.cs" />
     <Compile Include="Interfaces\Services\IAccountService.cs" />
     <Compile Include="Interfaces\Services\IEmailService.cs" />
+    <Compile Include="Interfaces\Services\IFacebookSubscriber.cs" />
     <Compile Include="Interfaces\Services\IHtmlGeneratorService.cs" />
+    <Compile Include="Interfaces\Services\IImageStorageManager.cs" />
     <Compile Include="Interfaces\Services\ILobbieService.cs" />
     <Compile Include="Interfaces\Services\ILoginService.cs" />
     <Compile Include="Interfaces\Services\IPaymentService.cs" />

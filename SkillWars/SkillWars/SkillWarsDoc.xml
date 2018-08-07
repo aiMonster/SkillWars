@@ -110,6 +110,19 @@
             <response code="202">Left to confirm new phone number</response>
             <response code="200">Success</response>
         </member>
+        <member name="M:SkillWars.Controllers.ImageStorageController.Upload(Microsoft.AspNetCore.Http.IFormFile)">
+            <summary>
+            Upload image
+            </summary>        
+            <returns></returns>
+        </member>
+        <member name="M:SkillWars.Controllers.ImageStorageController.Download(System.String)">
+            <summary>
+            Download image by id
+            </summary>
+            <param name="id">Image id</param>       
+            <returns></returns>
+        </member>
         <member name="M:SkillWars.Controllers.LobbieController.CreateLobbie(Common.DTO.Lobbie.LobbieRequest)">
             <summary>
             Create lobbie
@@ -242,6 +255,13 @@
             <response code="400">Confirmation date is over</response>
             <response code="400">Bad request</response>
             <response code="200">Success</response>
+        </member>
+        <member name="M:SkillWars.Controllers.PaymentController.Post(Microsoft.AspNetCore.Http.IFormFile)">
+             <summary>
+             
+            </summary>
+             <param name="file"></param>
+             <returns></returns>
         </member>
     </members>
 </doc>

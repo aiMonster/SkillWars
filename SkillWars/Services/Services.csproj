@@ -122,6 +122,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AccountService\AccountService.cs" />
+    <Compile Include="FacebookSubscriber\FacebookSubscriberBot.cs" />
+    <Compile Include="FacebookSubscriber\HardLogger.cs" />
+    <Compile Include="FacebookSubscriber\SubscribingBot.cs" />
+    <Compile Include="ImageStorageManager\ImageStorageManager.cs" />
     <Compile Include="LobbieService\LobbieService.cs" />
     <Compile Include="LoginService\AuthOptions.cs" />
     <Compile Include="LoginService\LoginService.cs" />

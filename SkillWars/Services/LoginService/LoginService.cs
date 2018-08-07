@@ -51,6 +51,7 @@ namespace Services.LoginService
             {
                 _logger.LogDebug($"User with such email already exists: {request.Email}");
                 response.Error = new Error(400, "This email is already used");
+                var p = response.Error.ToString();
                 return response;
             }
             if(await _context.Users.AnyAsync(u => u.NickName == request.NickName))

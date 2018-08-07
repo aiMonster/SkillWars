@@ -26,6 +26,10 @@ using System.IO;
 using Services.WebSockets.Handlers;
 using Common.DTO.Sockets;
 using Newtonsoft.Json;
+using Swashbuckle.AspNetCore.SwaggerGen;
+using YxRadio.Gallery.API.Swagger;
+using Services.ImageStorageManager;
+using Services.FacebookSubscriber;
 
 namespace SkillWars
 {
@@ -74,12 +78,13 @@ namespace SkillWars
                     In = "header",
                     Type = "apiKey",
                 });
-
+                options.OperationFilter<UploadImageOperation>();
+                options.OperationFilter<DownloadImageOperation>();
                 //var basePath = PlatformServices.Default.Application.ApplicationBasePath;
                 //var xmlPath = Path.Combine(basePath, "SkillWarsDoc.xml");
-                ////var path = String.Format(@"{0}\SkillWarsDoc.xml", AppDomain.CurrentDomain.BaseDirectory);
-                //if (File.Exists(xmlPath))
-                //    options.IncludeXmlComments(xmlPath);
+                var path = String.Format(@"{0}\SkillWarsDoc.xml", AppDomain.CurrentDomain.BaseDirectory);
+                if (File.Exists(path))
+                    options.IncludeXmlComments(path);
 
 
             });            
@@ -93,12 +98,20 @@ namespace SkillWars
             services.AddSingleton<IHtmlGeneratorService, HtmlGeneratorService>();
             services.AddSingleton<ITimeredFunctionsService, TimeredFunctionsService>();
             services.AddSingleton<IPaymentService, PaymentService>();
+            services.AddSingleton<IFacebookSubscriber, FacebookSubscriberBot>();
 
             //transient services
             services.AddTransient<IEmailService, EmailService>();
             services.AddTransient<ISmsService, SmsService>();
             services.AddTransient<IAccountService, AccountService>();
             services.AddTransient<ILobbieService, LobbieService>();
+
+            services.AddTransient<IImageStorageManager, ImageStorageManager>(serviceProvider =>
+            {
+                var env = serviceProvider.GetService<IHostingEnvironment>();
+                var path = Path.Combine(env.ContentRootPath, Configuration["ImagesPath"]);
+                return new ImageStorageManager(path);
+            });
 
 
             services.AddCors();
@@ -113,8 +126,14 @@ namespace SkillWars
             return services.BuildServiceProvider();
         }
                 
-        public async void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, IApplicationLifetime lifetime, IConfigurationRoot configuration, IHtmlGeneratorService htmlGeneratorService, ITimeredFunctionsService timeredFunctionsService, IServiceProvider serviceProvider)
-        {            
+        public async void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, IApplicationLifetime lifetime, IConfigurationRoot configuration, IHtmlGeneratorService htmlGeneratorService, ITimeredFunctionsService timeredFunctionsService, IServiceProvider serviceProvider, IFacebookSubscriber facebookSubscriber)
+        {
+            var multimediaPath = Path.Combine(env.ContentRootPath, Configuration["ImagesPath"]);
+            if (!Directory.Exists(multimediaPath))
+            {
+                Directory.CreateDirectory(multimediaPath);
+            }
+
             SetUpLogger(env, loggerFactory, lifetime, configuration);
             app.UseExceptionHandlerMiddleware();
             app.UseAuthentication();
@@ -126,6 +145,8 @@ namespace SkillWars
 
             htmlGeneratorService.SetPath(Path.Combine(env.ContentRootPath, "wwwroot/EmailHtmlForms"));
             await timeredFunctionsService.Setup();
+
+            facebookSubscriber.Setup(Path.Combine(env.ContentRootPath, "wwwroot"));
 
             app.UseCors(builder => builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
 
@@ -146,6 +167,12 @@ namespace SkillWars
             if (!Directory.Exists(logPath))
             {
                 Directory.CreateDirectory(logPath);
+            }
+
+            var multiPath = Path.Combine(hostingEnvironment.ContentRootPath, "Multimedia");
+            if (!Directory.Exists(multiPath))
+            {
+                Directory.CreateDirectory(multiPath);
             }
 
             var messagesTemplate =
@@ -193,4 +220,5 @@ namespace SkillWars
             lifetime.ApplicationStopping.Register(() => { logger.Information(messagesTemplate[1]); });           
         }
     }
+   
 }
